@@ -1,38 +1,28 @@
+/* src/App.css */
+
+/* .App sarmalayıcısı için temel stiller (isteğe bağlı) */
 .App {
-  text-align: center;
+  /* Örneğin, tüm uygulamanın metin hizalamasını buradan ayarlayabilirsiniz,
+     ancak bu genellikle body veya html etiketinde (index.css) yapılır. */
+  /* text-align: center; */
+
+  /* Eğer uygulamanızda genel bir maksimum genişlik veya
+     merkezleme istiyorsanız, burada tanımlanabilir, ancak
+     bu genellikle her bölümün kendi .container class'ı ile yönetilir. */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/*
+  Eğer <main> etiketi için özel bir stil uygulamak isterseniz:
+  main {
+    // Örneğin, header fixed ise, main içeriğinin header'ın altına
+    // itilmesi için bir padding-top eklenebilir.
+    // Bu, header'ın yüksekliğine bağlı olacaktır.
+    // padding-top: 80px; // Header yüksekliğiniz neyse ona göre ayarlayın
   }
-}
+*/
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+/*
+  Not: Çoğu global stil (fontlar, renk değişkenleri, body stilleri, .container, .bolum, .btn vb.)
+  src/index.css dosyasında tanımlanmalıdır. App.css daha çok App bileşeninin
+  kendi yapısıyla ilgili çok genel düzenlemeler için kullanılır.
+*/

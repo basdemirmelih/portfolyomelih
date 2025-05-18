@@ -1,0 +1,44 @@
+/* === FOOTER BÖLÜMÜ STİLLERİ === */
+#footer {
+    padding: 50px 0;
+    text-align: center;
+    background-color: #101010; /* Footer arka plan rengi */
+    border-top: 1px solid #252525; /* Üst kenarlık */
+}
+
+#footer p {
+    color: #A0A0A0; /* Telif hakkı metni rengi */
+    font-size: 0.9rem;
+    /* margin-bottom: 20px; Bu, .sosyal-medya div'ine inline style olarak eklendiği için burada yoruma alındı.
+       Eğer inline style istemiyorsanız, buradaki yorumu kaldırıp JS dosyasındaki style prop'unu silebilirsiniz. */
+}
+
+.sosyal-medya a {
+    color: #A0A0A0; /* Sosyal medya ikonlarının varsayılan rengi */
+    font-size: 1.5rem; /* İkon boyutu */
+    margin: 0 15px; /* İkonlar arası yatay boşluk */
+    transition: color 0.3s ease, transform 0.3s ease; /* Yumuşak geçiş efektleri */
+    display: inline-block; /* Transform özelliğinin düzgün çalışması için */
+}
+
+.sosyal-medya a:hover {
+    color: var(--primary-accent); /* Hover'da ikon rengi (Global CSS değişkeni) */
+    transform: translateY(-3px); /* Hover'da hafif yukarı kalkma efekti */
+}
+
+/* === MOBİL UYUMLULUK İÇİN FOOTER STİLLERİ === */
+/* Footer genellikle çok fazla özel mobil stil gerektirmez,
+   ancak gerekirse buraya eklenebilir. Örneğin, ikon boyutları veya boşluklar ayarlanabilir. */
+
+@media (max-width: 768px) {
+    #footer {
+        padding: 40px 0; /* Mobilde padding'i biraz azalt */
+    }
+    .sosyal-medya a {
+        font-size: 1.4rem; /* Mobilde ikonları biraz küçült */
+        margin: 0 10px; /* Mobilde ikonlar arası boşluğu azalt */
+    }
+    #footer p {
+        font-size: 0.85rem; /* Mobilde telif hakkı metnini biraz küçült */
+    }
+}

@@ -1,0 +1,117 @@
+/* === PORTFOLYO BÖLÜMÜ STİLLERİ === */
+.portfolyo-galeri {
+    display: grid;
+    /* Sütunlar: En az 340px genişliğinde, sığdığı kadar sütun oluştur, kalan alanı eşit paylaştır */
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 30px; /* Kartlar arası boşluk */
+}
+
+.proje-kart {
+    position: relative; /* Overlay'in pozisyonlanması için */
+    overflow: hidden; /* Taşan kısımları (özellikle büyüyen resim) gizle */
+    border-radius: 4px; /* Kart köşelerini yuvarlat */
+    background-color: var(--secondary-accent); /* Resim yüklenene kadar veya resim yoksa arka plan */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge */
+    transition: transform 0.3s ease-out; /* Kartın kendisine hover efekti için (opsiyonel) */
+}
+
+/* Opsiyonel: Kartın kendisine de bir hover efekti eklenebilir */
+/* .proje-kart:hover {
+    transform: translateY(-5px);
+} */
+
+.proje-kart img {
+    width: 100%;
+    height: 300px; /* Kart resim yüksekliği, isteğe bağlı ayarlanabilir */
+    object-fit: cover; /* Resmi kırparak sığdırır, oranını korur */
+    display: block; /* Altında oluşabilecek boşluğu engeller */
+    transition: transform 0.5s ease, filter 0.5s ease; /* Resim hover efektleri için yumuşak geçiş */
+}
+
+.proje-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9)); /* Alttan üste doğru koyulaşan gradient */
+    display: flex;
+    flex-direction: column; /* İçeriği (başlık, paragraf, buton) alt alta sırala */
+    justify-content: flex-end; /* İçeriği kartın altına yasla */
+    padding: 25px;
+    opacity: 0; /* Başlangıçta görünmez */
+    transform: translateY(20px); /* Başlangıçta biraz aşağıda (kayma efekti için) */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Overlay görünme efektleri için yumuşak geçiş */
+    color: var(--text-color); /* Overlay içindeki metin rengi */
+}
+
+.proje-kart:hover img {
+    transform: scale(1.1); /* Resim hover'da hafifçe büyüsün */
+    filter: brightness(0.7); /* Resim hover'da biraz kararsın */
+}
+
+.proje-kart:hover .proje-overlay {
+    opacity: 1; /* Overlay hover'da görünür olsun */
+    transform: translateY(0); /* Overlay hover'da orijinal pozisyonuna gelsin */
+}
+
+.proje-overlay h3 {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    color: var(--text-color); /* Overlay başlık rengi (genelden miras alır ama belirginleştirmek için) */
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+
+.proje-overlay p {
+    color: var(--light-accent); /* Overlay açıklama metni rengi */
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    line-height: 1.6;
+    /* Çok uzun açıklamalar için satır sınırlaması (opsiyonel) */
+    /* display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; */
+}
+
+.proje-overlay .btn-ghost { /* Overlay içindeki buton */
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    align-self: flex-start; /* Butonu sola yasla (flex container içinde olduğu için) */
+    /* Butonun rengi zaten .btn-ghost class'ından geliyor */
+}
+
+
+/* === MOBİL UYUMLULUK İÇİN PORTFOLYO BÖLÜMÜ STİLLERİ === */
+@media (max-width: 768px) { /* Telefonlar için (orijinaldeki gibi tek sütun) */
+    .portfolyo-galeri {
+        grid-template-columns: 1fr; /* Tek sütunlu düzen */
+        gap: 25px; /* Kartlar arası boşluk biraz azaltılabilir */
+    }
+    .proje-kart img {
+        height: 250px; /* Mobilde resim yüksekliği biraz azaltılabilir */
+    }
+    .proje-overlay {
+        padding: 20px; /* Mobilde overlay padding'i biraz azaltılabilir */
+    }
+    .proje-overlay h3 {
+        font-size: 1.4rem;
+    }
+    .proje-overlay p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) { /* Çok küçük ekranlar için */
+    .portfolyo-galeri {
+        /* minmax(340px, 1fr) zaten küçük ekranlarda tek sütuna düşürecektir, */
+        /* ancak daha hassas kontrol için minmax'in minimum değeri düşürülebilir veya doğrudan 1fr kalabilir. */
+        /* Örneğin: grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); */
+    }
+    .proje-kart img {
+        height: 220px;
+    }
+}

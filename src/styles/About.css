@@ -1,0 +1,261 @@
+/* === HAKKIMDA BÖLÜMÜ STİLLERİ === */
+/* #hakkimda .container genel 'bolum' ve 'container' stillerini (index.css veya App.css) kullanır. */
+/* Özel flex düzeni için: */
+#hakkimda .container {
+    display: flex;
+    flex-direction: column; /* Ana container elemanları (ust-kisim ve bilgiler-alt-satir) alt alta sıralar */
+    gap: 40px; /* Üst kısım ile alt bilgi satırı arasına boşluk */
+}
+
+.hakkimda-ust-kisim { /* Fotoğraf ve metni içeren üst bölüm */
+    display: flex;
+    flex-wrap: wrap; /* Mobilde alt alta gelmesi için */
+    gap: 40px; /* Fotoğraf ve metin arası boşluk */
+    align-items: flex-start; /* Öğeleri yukarıda hizala */
+    width: 100%;
+}
+
+.hakkimda-sol { /* Fotoğraf alanı */
+    flex: 1; /* Esnek büyüme faktörü */
+    max-width: 400px; /* Maksimum genişlik */
+    min-width: 280px; /* Minimum genişlik, dar ekranlarda sıkışmayı önler */
+}
+
+.hakkimda-sol img {
+    width: 100%;
+    border-radius: 8px; /* Köşeleri yuvarlatma */
+    object-fit: cover; /* Resmi kırparak sığdırır */
+    height: auto; /* Oranını korur */
+    border: 3px solid var(--secondary-accent); /* Resim etrafına çerçeve */
+}
+
+.hakkimda-sag { /* Sadece başlık ve metni içeren sağ taraf */
+    flex: 2; /* Fotoğrafa göre daha fazla alan kaplar */
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Başlık ve metin arası boşluk */
+}
+
+/* Bu başlık sadece "Hakkımda" bölümünün sağ tarafında kullanılır, sola yaslıdır */
+.hakkimda-bolum-baslik {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-color);
+    /* margin-bottom: 20px; .hakkimda-sag içindeki gap ile yönetiliyor */
+    text-align: left; /* Sola hizalı */
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.hakkimda-bolum-baslik::after { /* Başlığın altındaki vurgu çizgisi */
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0; /* Sola hizalı */
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary-accent);
+}
+
+.hakkimda-metin h3 {
+    font-family: var(--font-heading);
+    font-size: 1.7rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.hakkimda-metin p {
+    margin-bottom: 15px;
+    color: #B0B0B0; /* Biraz daha soluk metin rengi */
+    font-size: 1.05rem;
+    line-height: 1.8; /* Okunabilirlik için satır yüksekliği */
+}
+
+.bilgiler-alt-satir { /* Üç bilgi kutusunu içeren ve TÜM SATIRI KAPLAYAN bölüm */
+    display: flex; /* Kutuları yan yana dizer */
+    flex-wrap: wrap; /* Mobilde alt alta gelmelerini sağlar */
+    gap: 25px; /* Bilgi kutuları arası boşluk */
+    align-items: stretch; /* Kutuların yüksekliklerini eşitler (eğer içerikleri farklıysa) */
+    width: 100%;
+}
+
+.bilgiler-alt-satir > .bilgi-kutusu { /* Yan yana duran ve satıra yayılan üç kutu */
+    flex: 1; /* Eşit genişlikte yayılmalarını sağlar */
+    min-width: 280px; /* Mobilde minimum genişlik */
+    background-color: #202020; /* Kutuların arka plan rengi */
+    padding: 25px;
+    border-radius: 4px;
+    display: flex; /* İçeriği dikeyde düzenlemek için (özellikle butonun en altta kalması için) */
+    flex-direction: column; /* İçerik alt alta */
+}
+
+.bilgi-kutusu h4 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    color: var(--primary-accent);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--secondary-accent); /* Başlık altı ayırıcı çizgi */
+}
+
+.bilgi-kutusu ul {
+    list-style: none; /* Liste işaretlerini kaldır */
+    padding-left: 0; /* Sol padding'i sıfırla */
+    flex-grow: 1; /* Butonun aşağıda kalması için listeyi esnet */
+}
+
+/* Genel bilgi listesi (Kısa Bilgiler) */
+.bilgi-kutusu ul:not(.egitim-listesi):not(.diller-listesi) li {
+    margin-bottom: 12px;
+    color: #B0B0B0;
+    font-size: 0.95rem;
+}
+
+.bilgi-kutusu ul:not(.egitim-listesi):not(.diller-listesi) li strong {
+    color: var(--text-color);
+    font-weight: 600;
+    min-width: 100px; /* Başlıkların hizalı durması için (Doğum Tarihi:, E-posta: vb.) */
+    display: inline-block; /* min-width'in çalışması için */
+    margin-right: 5px;
+}
+
+.bilgi-kutusu ul:not(.egitim-listesi):not(.diller-listesi) li span { /* E-posta gibi değerler için */
+    color: var(--light-accent);
+}
+
+/* Eğitim ve Diller listeleri için özel stiller */
+.egitim-listesi li,
+.diller-listesi li {
+    display: flex; /* İkon ve metni yan yana getirmek için */
+    align-items: flex-start; /* Öğeleri dikeyde yukarıda hizala */
+    margin-bottom: 18px;
+    padding: 12px;
+    background-color: var(--secondary-accent); /* Liste elemanı arka planı */
+    border-radius: 3px;
+    border-left: 3px solid var(--primary-accent); /* Sol tarafta vurgu çizgisi */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.egitim-listesi li:hover,
+.diller-listesi li:hover {
+    transform: translateX(5px); /* Hover efekti */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.egitim-listesi li i,
+.diller-listesi li i { /* İkon stilleri */
+    color: var(--primary-accent);
+    font-size: 1.2rem;
+    margin-right: 12px; /* İkon ile metin arası boşluk */
+    margin-top: 3px; /* İkonu metinle daha iyi hizalamak için */
+    width: 20px; /* İkonlar için sabit genişlik */
+    text-align: center;
+}
+
+.egitim-listesi .okul-detay,
+.diller-listesi .dil-detay { /* İkonun sağındaki metin bölümü */
+    flex: 1; /* Kalan alanı kapla */
+    display: flex;
+    flex-direction: column; /* Okul adı ve tarihi alt alta */
+}
+
+.egitim-listesi li .okul-adi,
+.diller-listesi li .dil-adi {
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 3px;
+}
+
+.egitim-listesi li .okul-tarih,
+.diller-listesi li .dil-seviye {
+    color: var(--light-accent);
+    font-size: 0.85rem;
+}
+
+.bilgi-kutusu .btn-ghost { /* CV İndir butonu */
+    margin-top: auto; /* Butonu kutunun en altına iter (flex-grow sayesinde ul esner) */
+    padding: 10px 20px;
+    width: 100%; /* Butonun kutu genişliğini kaplaması için */
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* === MOBİL UYUMLULUK İÇİN HAKKIMDA BÖLÜMÜ STİLLERİ === */
+@media (max-width: 992px) { /* Tabletler için */
+    #hakkimda .container {
+        gap: 30px; /* Üst kısım ve alt satır arası boşluk mobilde */
+    }
+    .hakkimda-ust-kisim { /* Mobilde fotoğraf ve metin alt alta gelsin */
+        flex-direction: column;
+        align-items: center; /* İçeriği ortala */
+        gap: 30px; /* Fotoğraf ve metin arası boşluk */
+    }
+    .hakkimda-sol,
+    .hakkimda-sag {
+        flex: 1 1 100%; /* Tam genişlik kaplasınlar */
+        max-width: 100%;
+    }
+    .hakkimda-sol {
+        max-width: 350px; /* Fotoğrafın çok büyümesini engelle */
+    }
+    .hakkimda-sag {
+        align-items: center; /* Mobilde sağdaki başlık ve metin ortalansın */
+        gap: 20px;
+        text-align: center; /* Sağdaki metinler ortalansın */
+    }
+    .hakkimda-bolum-baslik { /* Sağdaki "Ben Kimim?" başlığı */
+        text-align: center; /* Mobilde ortalansın */
+        font-size: 2.2rem;
+    }
+    .hakkimda-bolum-baslik::after { /* Başlığın altındaki çizgi */
+        left: 50%;
+        transform: translateX(-50%); /* Çizgiyi ortala */
+    }
+    .hakkimda-metin {
+        text-align: center; /* Paragraflar da ortalansın */
+    }
+
+    .bilgiler-alt-satir { /* Mobilde bilgi kutuları da alt alta gelsin */
+        flex-direction: column;
+        gap: 20px;
+    }
+    /* .bilgiler-alt-satir > .bilgi-kutusu zaten flex:1 ve min-width ile yönetiliyor,
+       flex-direction: column olduğunda alt alta düzgün sıralanacaktır. */
+}
+
+@media (max-width: 768px) { /* Telefonlar için */
+    .hakkimda-bolum-baslik { /* Sağdaki "Ben Kimim?" başlığı */
+        font-size: 2rem;
+    }
+    .hakkimda-metin h3 {
+        font-size: 1.5rem;
+    }
+    .bilgi-kutusu h4 { /* Bilgi kutusu başlıkları */
+        font-size: 1.2rem;
+    }
+    .egitim-listesi li,
+    .diller-listesi li {
+        padding: 10px;
+    }
+    .egitim-listesi li i,
+    .diller-listesi li i {
+        font-size: 1.1rem;
+        margin-right: 10px;
+    }
+    .egitim-listesi li .okul-adi,
+    .diller-listesi li .dil-adi {
+        font-size: 0.95rem;
+    }
+    .egitim-listesi li .okul-tarih,
+    .diller-listesi li .dil-seviye {
+        font-size: 0.8rem;
+    }
+    .hakkimda-sol { /* Fotoğraf alanı */
+        max-width: 300px;
+    }
+}

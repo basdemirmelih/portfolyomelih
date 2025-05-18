@@ -1,0 +1,85 @@
+/* === NELER YAPABİLİRİM (YETENEKLER) BÖLÜMÜ STİLLERİ === */
+.yetkinlikler-liste {
+    display: grid;
+    /* Sütunlar: En az 300px genişliğinde, sığdığı kadar sütun oluştur, kalan alanı eşit paylaştır */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px; /* Yetenek öğeleri arası dikey ve yatay boşluk */
+}
+
+.yetkinlik-item {
+    padding: 20px 0; /* Her yetenek öğesi için üst ve alt padding */
+    /* background-color: var(--secondary-accent); */ /* Opsiyonel: Arka plan rengi */
+    /* border-radius: 4px; */ /* Opsiyonel: Köşe yuvarlatma */
+    /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */ /* Opsiyonel: Hafif gölge */
+}
+
+.yetkinlik-item h4 {
+    font-family: var(--font-body); /* Veya --font-heading, tercihinize bağlı */
+    font-size: 1.1rem; /* Yetenek başlığı boyutu */
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 10px; /* Başlık ile progress bar arası boşluk */
+    display: flex; /* İkon ve metni yan yana getirmek için */
+    align-items: center; /* Dikeyde ortala */
+}
+
+.yetkinlik-item h4 i { /* İkon stilleri */
+    color: var(--primary-accent); /* Ana vurgu rengi */
+    font-size: 1.5rem; /* İkon boyutu */
+    margin-right: 15px; /* İkon ile metin arası boşluk */
+    width: 30px; /* İkonlar için sabit genişlik, hizalamaya yardımcı olur */
+    text-align: center; /* İkonu kendi alanında ortala */
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px; /* Progress bar yüksekliği */
+    background-color: var(--secondary-accent); /* Progress bar arka planı (boş kısım) */
+    border-radius: 4px; /* Köşeleri yuvarlat */
+    overflow: hidden; /* İçindeki progress-bar'ın taşmasını engelle */
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); /* Hafif iç gölge (opsiyonel) */
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--primary-accent); /* Dolu progress bar rengi */
+    border-radius: 4px; /* Köşeleri yuvarlat (container ile aynı olmalı) */
+    transition: width 1s ease-in-out; /* Genişlik değişiminde yumuşak animasyon */
+    display: flex; /* İçine yüzde metni eklenirse hizalamak için (opsiyonel) */
+    align-items: center; /* Opsiyonel */
+    justify-content: flex-end; /* Opsiyonel */
+}
+
+/* Opsiyonel: Progress bar içindeki yüzde metni için stil */
+/*
+.progress-percentage {
+    color: var(--text-color);
+    font-size: 0.7rem;
+    padding-right: 5px;
+    font-weight: bold;
+}
+*/
+
+
+/* === MOBİL UYUMLULUK İÇİN YETENEKLER BÖLÜMÜ STİLLERİ === */
+@media (max-width: 768px) { /* Telefonlar için (orijinaldeki gibi tek sütun) */
+    .yetkinlikler-liste {
+        grid-template-columns: 1fr; /* Tek sütunlu düzen */
+        gap: 30px; /* Yetenek öğeleri arası boşluk biraz azaltılabilir */
+    }
+    .yetkinlik-item h4 {
+        font-size: 1rem; /* Mobilde başlık biraz küçülebilir */
+    }
+    .yetkinlik-item h4 i {
+        font-size: 1.3rem; /* Mobilde ikon biraz küçülebilir */
+        margin-right: 10px;
+    }
+}
+
+/*
+@media (max-width: 480px) { // Çok küçük ekranlar için ek ayarlar
+    .yetkinlik-item h4 {
+        font-size: 0.9rem;
+    }
+}
+*/

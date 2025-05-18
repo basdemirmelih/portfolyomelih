@@ -1,0 +1,120 @@
+/* src/styles/Hero.css */
+
+/* === ANA SAYFA / HERO BÖLÜMÜ === */
+#ana-sayfa {
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: center; /* Dikeyde ortalama */
+    justify-content: flex-start; /* Yatayda sola yaslama (container içinde) */
+    position: relative;
+
+    /* ARKA PLAN RESMİ ARTIK Hero.js İÇİNDEN inline style İLE VERİLİYOR. */
+    /* BU NEDENLE AŞAĞIDAKİ GİBİ BİR SATIR OLMAMALI VEYA YORUM SATIRI OLMALI: */
+    /* background: linear-gradient(rgba(24, 24, 24, 0.75), rgba(24, 24, 24, 0.90)), url('/images/1.jpeg') no-repeat center center/cover; */
+
+    /* Ancak, arka planın nasıl davranacağını belirten bu özellikler CSS'te kalabilir: */
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+
+    border-bottom: none;
+    text-align: left; /* .hero-icerik içindeki metinlerin sola yaslanması için */
+}
+
+.hero-icerik {
+    max-width: 700px; /* İçerik genişliğini sınırlar */
+    /* .container class'ının padding'i sayesinde soldan boşluklu başlar */
+    /* z-index: 1; Arka planın üzerinde kalması için (genellikle gerekmez) */
+}
+
+/* Hero bölümündeki H1 başlığı index.css'teki genel h1 stilinden font-family alacak. */
+/* Burada sadece boyutu ve diğer özelleştirmeleri yapıyoruz. */
+.hero-icerik h1 {
+    /* font-family: var(--font-heading); Bu zaten index.css'ten gelmeli */
+    font-size: 4.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.1;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.hero-icerik h1 span {
+    color: var(--primary-accent);
+}
+
+/* Hero alt başlığı (Ben bir...) */
+.hero-altbaslik {
+    font-family: var(--font-body); /* index.css'ten gelmeli */
+    font-size: 1.5rem;
+    color: var(--light-accent); /* index.css'ten gelmeli */
+    margin-bottom: 40px;
+    font-weight: 400;
+    min-height: 2.5em; /* Satır kaymalarını önlemek için */
+}
+
+/* Animasyonlu metnin kendisi */
+#typed-text {
+    font-weight: 600;
+    color: var(--text-color); /* index.css'ten gelmeli */
+    border-bottom: 2px solid var(--primary-accent); /* index.css'ten gelmeli */
+    padding-bottom: 2px;
+}
+
+/* Yanıp sönen imleç (Eğer CustomTypedText.js kullanılıyorsa) */
+.typed-cursor {
+    opacity: 1;
+    animation: blink 0.7s infinite;
+    color: var(--primary-accent); /* index.css'ten gelmeli */
+    margin-left: 1px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    49% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+/* Butonlar .btn ve .btn-ghost class'larını index.css'ten alacak. */
+
+
+/* === MOBİL UYUMLULUK İÇİN HERO STILLERİ === */
+@media (max-width: 992px) {
+    .hero-icerik h1 {
+        font-size: 3.5rem;
+    }
+    .hero-altbaslik {
+        font-size: 1.3rem;
+        min-height: 2.3em;
+    }
+}
+
+@media (max-width: 768px) {
+    #ana-sayfa {
+        min-height: 600px;
+    }
+    .hero-icerik {
+        padding-top: 80px;
+    }
+    .hero-icerik h1 {
+        font-size: 2.8rem;
+    }
+    .hero-altbaslik {
+        font-size: 1.2rem;
+        min-height: 2.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-icerik h1 {
+        font-size: 2.2rem;
+    }
+    .hero-altbaslik {
+        font-size: 1.1rem;
+        min-height: 2em;
+    }
+}

@@ -1,0 +1,143 @@
+/* === HEADER VE NAVİGASYON === */
+#header {
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    padding: 25px 0;
+    transition: background-color 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
+    background-color: transparent; /* :root değişkenlerini kullanmak için index.css'in import edildiğini varsayıyoruz */
+}
+
+#header.scrolled {
+    background-color: rgba(24, 24, 24, 0.95); /* Veya var(--bg-color) opaklıkla */
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+#header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-family: var(--font-heading); /* Bu değişkenlerin index.css veya App.css'te tanımlı olması gerekir */
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.logo span {
+    color: var(--primary-accent);
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    margin: 0; /* Reset */
+    padding: 0; /* Reset */
+}
+
+.nav-menu li {
+    margin-left: 40px;
+}
+
+.nav-link {
+    font-family: var(--font-body);
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+    position: relative;
+    padding-bottom: 8px;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-accent);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.aktif::after {
+    width: 100%;
+}
+.nav-link:hover,
+.nav-link.aktif {
+    color: var(--primary-accent);
+}
+
+.hamburger {
+    display: none; /* Varsayılan olarak gizli, mobil için media query'de gösterilecek */
+    cursor: pointer;
+    z-index: 1001; /* nav-menu'den üstte olması için */
+}
+.hamburger .bar {
+    display: block;
+    width: 30px;
+    height: 3px;
+    margin: 6px auto;
+    background-color: var(--text-color);
+    transition: all 0.3s ease-in-out;
+}
+
+/* === MOBİL UYUMLULUK İÇİN HEADER STILLERİ === */
+/* Bu stiller genellikle projenizin ana CSS dosyasındaki (örn: index.css veya App.css) media query'ler içinde yer alır, */
+/* ancak Header.css içinde de yönetilebilir. */
+
+@media (max-width: 768px) {
+    .logo {
+        font-size: 1.8rem;
+    }
+    #header.scrolled .logo { /* Scrolled durumunda logo boyutu değişiyorsa */
+        font-size: 1.8rem; /* Veya farklı bir değer */
+    }
+    #header.scrolled { /* Scrolled durumunda padding değişiyorsa */
+        padding: 10px 0;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0; /* Header'ın hemen altından başlaması için header yüksekliği kadar olabilir, ya da tam ekran */
+        left: -100%; /* Başlangıçta gizli */
+        width: 100%;
+        height: 100vh;
+        background-color: var(--bg-color); /* Ana arka plan rengi */
+        padding-top: 80px; /* Header için boşluk veya logonun yüksekliğine göre ayarlanır */
+        text-align: center;
+        transition: left 0.35s ease-in-out;
+        z-index: 999; /* Header'ın kendisinden düşük, içerikten yüksek */
+    }
+    .nav-menu.aktif {
+        left: 0; /* Aktif olduğunda görünür */
+    }
+    .nav-menu li {
+        margin: 20px 0; /* Dikeyde boşluk */
+    }
+    .nav-link {
+        font-size: 1.2rem; /* Mobil menüde daha büyük font */
+    }
+    .hamburger {
+        display: block; /* Mobilde hamburger ikonunu göster */
+    }
+    .hamburger.aktif .bar:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+    .hamburger.aktif .bar:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.aktif .bar:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+}

@@ -1,0 +1,156 @@
+/* === İLETİŞİM BÖLÜMÜ STİLLERİ === */
+#iletisim .iletisim-giris {
+    max-width: 700px;
+    margin: 0 auto 50px auto; /* Üst, sağ/sol auto (ortalar), alt */
+    text-align: center;
+    font-size: 1.1rem;
+    color: #B0B0B0; /* Biraz daha soluk metin */
+    line-height: 1.7;
+}
+
+.iletisim-kartlari {
+    display: flex;
+    flex-wrap: wrap; /* Kartlar sığmazsa alt satıra geçer */
+    justify-content: center; /* Kartları yatayda ortalar */
+    gap: 30px; /* Kartlar arası boşluk */
+    margin-bottom: 60px; /* Kartlar ile form arası boşluk */
+    align-items: stretch; /* Aynı sıradaki kartların yüksekliklerini eşitler (Flexbox özelliği) */
+}
+
+#iletisim .iletisim-item {
+    background-color: #202020; /* Kart arka plan rengi */
+    padding: 30px;
+    border-radius: 4px;
+    text-align: center;
+    flex-basis: calc(33.333% - 21px); /* 3'lü düzende boşlukları hesaba katarak genişlik (gap 30px ise (30*2)/3=20px) */
+    min-width: 280px; /* Minimum kart genişliği */
+    display: flex;
+    flex-direction: column; /* Kart içindeki ikon, başlık, metin alt alta */
+    align-items: center; /* Kart içindeki öğeleri yatayda ortalar */
+    justify-content: center; /* Kart içindeki öğeleri dikeyde ortalar (eğer yükseklik sabitse veya içerik azsa) */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* margin-bottom: 20px; /* gap özelliği bunu yönetir, tek satırda sorun yok, çoklu satırda flex-wrap ile bu gereksiz */
+}
+
+#iletisim .iletisim-item:hover {
+    transform: translateY(-5px); /* Hover'da hafif yukarı kalkma efekti */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2); /* Hover'da gölge efekti */
+}
+
+#iletisim .iletisim-item i { /* İkon stilleri */
+    font-size: 2.5rem;
+    color: var(--primary-accent); /* Ana vurgu rengi */
+    margin-bottom: 20px;
+}
+
+#iletisim .iletisim-item h4 { /* Kart başlığı */
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+#iletisim .iletisim-item p,
+#iletisim .iletisim-item a {
+    font-size: 1rem;
+    color: var(--light-accent); /* Açık vurgu rengi */
+    text-decoration: none; /* Linklerin alt çizgisini kaldır */
+    transition: color 0.3s ease;
+    word-break: break-word; /* Uzun linklerin veya metinlerin taşmasını engeller */
+}
+
+#iletisim .iletisim-item a:hover {
+    color: var(--primary-accent); /* Linklerin hover rengi */
+}
+
+/* === İLETİŞİM FORMU STİLLERİ === */
+.iletisim-formu {
+    max-width: 800px;
+    margin: 0 auto; /* Formu ortalar */
+    background-color: #202020; /* Form arka planı */
+    padding: 40px;
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.iletisim-formu h3 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.form-grup {
+    margin-bottom: 25px;
+}
+
+.form-grup label {
+    display: block; /* Etiketi input'un üzerine alır */
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--light-accent);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-grup input[type="text"],
+.form-grup input[type="email"],
+.form-grup textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--secondary-accent); /* Input arka planı */
+    border: 1px solid #505050; /* Input kenarlığı */
+    border-radius: 2px;
+    color: var(--text-color); /* Yazı rengi */
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-grup input[type="text"]:focus,
+.form-grup input[type="email"]:focus,
+.form-grup textarea:focus {
+    outline: none; /* Tarayıcı varsayılan focus outline'ını kaldırır */
+    border-color: var(--primary-accent); /* Focus'ta kenarlık rengi */
+    box-shadow: 0 0 0 2px rgba(var(--primary-accent-rgb, 255, 74, 28), 0.3); /* Hafif dış gölge (RGB değişkeni tanımlıysa) */
+    /* Eğer --primary-accent-rgb tanımlı değilse: */
+    /* box-shadow: 0 0 0 2px rgba(255, 74, 28, 0.3); */
+}
+
+.form-grup textarea {
+    min-height: 150px; /* Mesaj alanı minimum yüksekliği */
+    resize: vertical; /* Sadece dikeyde yeniden boyutlandırmaya izin ver */
+}
+
+.form-grup .btn { /* Form içindeki buton */
+    width: 100%; /* Butonun tüm genişliği kaplaması */
+}
+
+/* === MOBİL UYUMLULUK İÇİN İLETİŞİM BÖLÜMÜ STİLLERİ === */
+@media (max-width: 992px) { /* Tabletler için */
+    #iletisim .iletisim-item {
+        flex-basis: calc(50% - 15px); /* 2'li düzende genişlik (gap 30px ise (30*1)/2=15px)*/
+    }
+    .iletisim-formu {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) { /* Telefonlar için */
+    /* #iletisim .bolum-baslik (eğer genelse index.css'ten alır) */
+    /* .iletisim-giris { font-size: 1rem; } */
+
+    #iletisim .iletisim-item {
+        flex-basis: 100%; /* Kartlar tam genişlikte alt alta gelir */
+        /* margin-bottom: 20px; /* gap kullanıldığı için bu gereksiz olabilir, kontrol edin */
+    }
+    .iletisim-formu {
+        padding: 25px 20px; /* Mobil için form padding'i */
+    }
+    .iletisim-formu h3 {
+        font-size: 1.5rem; /* Form başlığı mobilde biraz daha küçük */
+    }
+}
