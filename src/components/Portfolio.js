@@ -1,11 +1,12 @@
 import React from 'react';
-import '../styles/Portfolio.css'; // Portfolio bölümüne özel stiller
+import soruBankasiResmi from '../resim/bankasisoru.png';
+import '../styles/Portfolio.css';
 
 // Portfolyo öğeleri için veri.
 const portfolioData = [
     {
         id: 4, // Mini Soru Bankası projesi
-        imgSrc: 'src/images1/sorubankasi.png', // GÜNCELLENMİŞ RESİM YOLU
+        imgSrc: '/src/resim/bankasisoru.png', // GÜNCELLENMİŞ RESİM YOLU
         imgAlt: 'Mini Soru Bankası Uygulaması Ekran Görüntüsü',
         title: 'Mini Soru Bankası',
         description: 'Python ile geliştirilmiş bir komut satırı tabanlı mini soru bankası uygulaması.',
