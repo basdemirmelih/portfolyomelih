@@ -4,8 +4,9 @@ import soruBankasiResmi from '../resim/bankasisoru.png';
 import notDefteriResmi from '../resim/not_defteri.png';
 import havaDurumuResmi from '../resim/hava_durumu.png';
 import webSiteResmi from '../resim/web_site.png';
-// YENİ OYUN GÖRSELİ İÇİN IMPORT SATIRI
-import oyunGorseli from '../resim/oyun_gorsel.jpg'; // Dosya adını 'oyun_gorsel.jpg' olarak kaydettiğini varsayıyorum
+import oyunGorseli from '../resim/oyun_gorsel.jpg';
+// YENİ HTML/CSS ÖĞRETİCİ GÖRSELİ İÇİN IMPORT SATIRI
+import htmlCssOgreticiResmi from '../resim/html_css.png'; // Yeni resim importu
 
 import '../styles/Portfolio.css'; // Portfolio bölümüne özel stiller
 
@@ -43,14 +44,22 @@ const portfolioData = [
         description: 'React ile geliştirdiğim, projelerimi, yeteneklerimi ve hakkımdaki diğer bilgileri sergilediğim kişisel web sitem.',
         detailsLink: '#', // Bu portfolyo sitesinin GitHub linki veya canlı URL'si eklenebilir
     },
-    // YENİ EKLENEN OYUN PROJESİ
     {
-        id: 8, // Benzersiz yeni bir ID
-        imgSrc: oyunGorseli, // Yeni import ettiğimiz oyun görseli
+        id: 8,
+        imgSrc: oyunGorseli,
         imgAlt: 'Oyun Projesi Ekran Görüntüsü',
-        title: 'Oyun Geliştirme Projesi', // Başlığı istediğin gibi değiştirebilirsin
-        description: 'Unity ile geliştirilmiş bir araba oyunu projesi. Detaylar LinkedIn gönderisinde paylaşılmıştır.', // Açıklamayı istediğin gibi güncelleyebilirsin
-        detailsLink: 'https://www.linkedin.com/feed/update/urn:li:activity:7275872108751077376/', // Verdiğin LinkedIn linki
+        title: 'Oyun Geliştirme Projesi',
+        description: 'Unity ile geliştirilmiş bir araba oyunu projesi. Detaylar LinkedIn gönderisinde paylaşılmıştır.',
+        detailsLink: 'https://www.linkedin.com/feed/update/urn:li:activity:7275872108751077376/',
+    },
+    // YENİ EKLENEN HTML/CSS ÖĞRETİCİ PROJESİ
+    {
+        id: 9, // Benzersiz yeni bir ID
+        imgSrc: htmlCssOgreticiResmi, // Yeni import ettiğimiz HTML/CSS öğretici görseli
+        imgAlt: 'HTML CSS Öğretici Örnekleri Ekran Görüntüsü',
+        title: 'HTML CSS Öğretici Örnekleri',
+        description: 'Yorum satırlarıyla zenginleştirilmiş, öğretici ve örnekli HTML/CSS kodları.',
+        detailsLink: 'https://github.com/basdemirmelih/html_css_ogretici', // Verdiğiniz GitHub linki
     },
 ];
 
@@ -61,7 +70,7 @@ const Portfolio = () => {
                 <h2 className="bolum-baslik">Portfolyo</h2>
                 <div className="portfolyo-galeri">
                     {portfolioData
-                        .sort((a, b) => a.id - b.id) // ID'ye göre sıralama (isteğe bağlı)
+                        .sort((a, b) => a.id - b.id) // ID'ye göre sıralama
                         .map((proje) => (
                             <div className="proje-kart" key={proje.id}>
                                 <img src={proje.imgSrc} alt={proje.imgAlt} />
