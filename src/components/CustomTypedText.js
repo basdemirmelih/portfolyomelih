@@ -72,8 +72,6 @@ const CustomTypedText = ({
         delayAfterFull,
     ]);
 
-    // Eğer strings prop'u başlangıçta yoksa veya boşsa, render edilecek JSX
-    // Bu kontrol, Hook'lar çağrıldıktan sonra yapılır ve Rules of Hooks'a uygundur.
     if (!strings || strings.length === 0) {
         // console.warn("CustomTypedText: 'strings' prop eksik veya boş."); // Bu uyarıyı isterseniz açabilirsiniz
         return <span id="typed-text"></span>; // ID'yi stil tutarlılığı için ekleyebiliriz

@@ -26,10 +26,6 @@
     transform: translateY(-3px); /* Hover'da hafif yukarı kalkma efekti */
 }
 
-/* === MOBİL UYUMLULUK İÇİN FOOTER STİLLERİ === */
-/* Footer genellikle çok fazla özel mobil stil gerektirmez,
-   ancak gerekirse buraya eklenebilir. Örneğin, ikon boyutları veya boşluklar ayarlanabilir. */
-
 @media (max-width: 768px) {
     #footer {
         padding: 40px 0; /* Mobilde padding'i biraz azalt */
