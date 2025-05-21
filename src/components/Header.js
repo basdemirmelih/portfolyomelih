@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react'; // useMemo eklendi
 import '../styles/Header.css'; // Header'a özel stiller için
 
 const Header = () => {
@@ -7,13 +7,14 @@ const Header = () => {
     const [aktifLink, setAktifLink] = useState('ana-sayfa'); // Başlangıçta ana sayfa aktif
     const headerRef = useRef(null);
 
-    const navLinksData = [
+
+    const navLinksData = useMemo(() => [
         { href: '#ana-sayfa', text: 'Anasayfa', id: 'ana-sayfa' },
         { href: '#hakkimda', text: 'Ben Kimim?', id: 'hakkimda' },
         { href: '#neler-yapabilirim', text: 'Neler Yapabilirim?', id: 'neler-yapabilirim' },
         { href: '#portfolyo', text: 'Portfolyo', id: 'portfolyo' },
         { href: '#iletisim', text: 'İletişim', id: 'iletisim' },
-    ];
+    ], []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -85,7 +86,7 @@ const Header = () => {
         });
     };
 
-    const handleNavLinkClick = (e, targetId) => {
+    const handleNavLinkClick = (_e, _targetId) => {
         // e.preventDefault(); // Eğer sadece scroll yapılacaksa ve sayfa yenilenmeyecekse
         // const targetElement = document.getElementById(targetId.substring(1));
         // if (targetElement) {
