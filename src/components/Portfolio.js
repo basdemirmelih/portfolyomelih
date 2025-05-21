@@ -1,72 +1,56 @@
 import React from 'react';
-// Önceki resim importları
+// Mevcut resim importları
 import soruBankasiResmi from '../resim/bankasisoru.png';
 import notDefteriResmi from '../resim/not_defteri.png';
 import havaDurumuResmi from '../resim/hava_durumu.png';
-// YENİ: Portfolyo Web Sitesi resmi için import satırı
-import webSiteResmi from '../resim/web_site.png'; // .jpg uzantısına dikkat edin
+import webSiteResmi from '../resim/web_site.png';
+// YENİ OYUN GÖRSELİ İÇİN IMPORT SATIRI
+import oyunGorseli from '../resim/oyun_gorsel.jpg'; // Dosya adını 'oyun_gorsel.jpg' olarak kaydettiğini varsayıyorum
 
 import '../styles/Portfolio.css'; // Portfolio bölümüne özel stiller
 
 // Portfolyo öğeleri için veri.
 const portfolioData = [
     {
-        id: 4, // Mini Soru Bankası projesi
+        id: 4,
         imgSrc: soruBankasiResmi,
-        imgAlt: 'Mini Soru Bankası Uygulaması Ekran Görüntüsü',
-        title: 'Mini Soru Bankası',
-        description: 'Python ile geliştirilmiş bir komut satırı tabanlı mini soru bankası uygulaması.',
-        detailsLink: 'https://github.com/basdemirmelih/SoruBankasi/blob/master/SoruBankas%C4%B1MelihB.py',
+        imgAlt: 'Soru Bankası Uygulaması Ekran Görüntüsü',
+        title: 'Soru Bankası Uygulaması',
+        description: 'Kullanıcıların soru ekleyip, görüntüleyebileceği bir soru bankası uygulaması.',
+        detailsLink: 'https://github.com/basdemirmelih/soru__bankasi',
     },
     {
-        id: 5, // Not Defteri Projesi
+        id: 5,
         imgSrc: notDefteriResmi,
         imgAlt: 'Not Defteri Uygulaması Ekran Görüntüsü',
         title: 'Kişisel Not Defteri',
         description: 'Kullanıcı dostu arayüzü ile metin düzenleme ve not alma imkanı sunan bir masaüstü uygulaması.',
-        detailsLink: '#',
+        detailsLink: 'https://github.com/basdemirmelih/not__defteri',
     },
     {
-        id: 6, // Hava Durumu Projesi
+        id: 6,
         imgSrc: havaDurumuResmi,
         imgAlt: 'Hava Durumu Uygulaması Ekran Görüntüsü',
         title: 'Gerçek Zamanlı Hava Durumu Uygulaması',
-        description: 'Belirtilen konum için internet üzerinden anlık hava durumu verilerini (sıcaklık, hissedilen, nem, rüzgar, basınç vb.) ve günlük tahminleri çekerek kullanıcıya sunar.',
-        detailsLink: '#',
+        description: 'Belirtilen konum için internet üzerinden anlık hava durumu verilerini ve günlük tahminleri çekerek kullanıcıya sunar.',
+        detailsLink: 'https://github.com/basdemirmelih/hava__durumu',
     },
-    // YENİ: Kişisel Portfolyo Web Sitesi Projesi
     {
-        id: 7, // Benzersiz bir ID verin
-        imgSrc: webSiteResmi, // Yeni import ettiğimiz resmi kullanıyoruz
+        id: 7,
+        imgSrc: webSiteResmi,
         imgAlt: 'Kişisel Portfolyo Web Sitesi Ekran Görüntüsü',
         title: 'Kişisel Portfolyo Web Sitesi',
-        description: 'React ile geliştirdiğim, projelerimi, yeteneklerimi ve hakkımdaki diğer bilgileri sergilediğim kişisel web sitem.', // Açıklamayı istediğiniz gibi güncelleyebilirsiniz
-        detailsLink: '#', // Buraya sitenizin canlı URL'sini veya GitHub deposunun linkini ekleyebilirsiniz
+        description: 'React ile geliştirdiğim, projelerimi, yeteneklerimi ve hakkımdaki diğer bilgileri sergilediğim kişisel web sitem.',
+        detailsLink: '#', // Bu portfolyo sitesinin GitHub linki veya canlı URL'si eklenebilir
     },
-    // Diğer projeleriniz (id: 1, 2, 3)
+    // YENİ EKLENEN OYUN PROJESİ
     {
-        id: 1,
-        imgSrc: 'https://via.placeholder.com/600x400/FF4A1C/FFFFFF?text=Proje+X',
-        imgAlt: 'Proje X Açıklaması',
-        title: 'Kurumsal Web Sitesi Yenileme',
-        description: 'Modern ve kullanıcı dostu bir arayüzle [Şirket Adı] için geliştirildi.',
-        detailsLink: '#',
-    },
-    {
-        id: 2,
-        imgSrc: 'https://via.placeholder.com/600x400/1A1A1A/FFD6C4?text=Proje+Y',
-        imgAlt: 'Proje Y Açıklaması',
-        title: 'E-Ticaret Platformu',
-        description: 'Kapsamlı ürün yönetimi ve güvenli ödeme altyapısı.',
-        detailsLink: '#',
-    },
-    {
-        id: 3,
-        imgSrc: 'https://via.placeholder.com/600x400/FFD6C4/1A1A1A?text=Proje+Z',
-        imgAlt: 'Proje Z Açıklaması',
-        title: 'Mobil Uygulama Tasarımı',
-        description: 'Sağlık ve fitness takibi için yenilikçi bir mobil uygulama konsepti.',
-        detailsLink: '#',
+        id: 8, // Benzersiz yeni bir ID
+        imgSrc: oyunGorseli, // Yeni import ettiğimiz oyun görseli
+        imgAlt: 'Oyun Projesi Ekran Görüntüsü',
+        title: 'Oyun Geliştirme Projesi', // Başlığı istediğin gibi değiştirebilirsin
+        description: 'Unity ile geliştirilmiş bir araba oyunu projesi. Detaylar LinkedIn gönderisinde paylaşılmıştır.', // Açıklamayı istediğin gibi güncelleyebilirsin
+        detailsLink: 'https://www.linkedin.com/feed/update/urn:li:activity:7275872108751077376/', // Verdiğin LinkedIn linki
     },
 ];
 
@@ -76,21 +60,20 @@ const Portfolio = () => {
             <div className="container">
                 <h2 className="bolum-baslik">Portfolyo</h2>
                 <div className="portfolyo-galeri">
-                    {/* Projeleri ID'ye göre sıralamak isterseniz (örneğin en yeniden en eskiye):
-                        portfolioData.sort((a, b) => b.id - a.id).map((proje) => (
-                    */}
-                    {portfolioData.map((proje) => (
-                        <div className="proje-kart" key={proje.id}>
-                            <img src={proje.imgSrc} alt={proje.imgAlt} />
-                            <div className="proje-overlay">
-                                <h3>{proje.title}</h3>
-                                <p>{proje.description}</p>
-                                <a href={proje.detailsLink} className="btn btn-ghost" target="_blank" rel="noopener noreferrer">
-                                    Detaylar
-                                </a>
+                    {portfolioData
+                        .sort((a, b) => a.id - b.id) // ID'ye göre sıralama (isteğe bağlı)
+                        .map((proje) => (
+                            <div className="proje-kart" key={proje.id}>
+                                <img src={proje.imgSrc} alt={proje.imgAlt} />
+                                <div className="proje-overlay">
+                                    <h3>{proje.title}</h3>
+                                    <p>{proje.description}</p>
+                                    <a href={proje.detailsLink} className="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+                                        Detaylar
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </div>
         </section>
