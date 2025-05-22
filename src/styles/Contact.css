@@ -20,7 +20,7 @@
 #iletisim .iletisim-item {
     background-color: #202020; /* Kart arka plan rengi */
     padding: 30px;
-    border-radius: 4px;
+    border-radius: 8px; /* Kart köşelerini yuvarlat (arttırıldı) */
     text-align: center;
     flex-basis: calc(33.333% - 21px); /* 3'lü düzende boşlukları hesaba katarak genişlik (gap 30px ise (30*2)/3=20px) */
     min-width: 280px; /* Minimum kart genişliği */
