@@ -26,6 +26,7 @@
     object-fit: cover; /* Resmi kırparak sığdırır, oranını korur */
     display: block; /* Altında oluşabilecek boşluğu engeller */
     transition: transform 0.5s ease, filter 0.5s ease; /* Resim hover efektleri için yumuşak geçiş */
+    filter: brightness(75%); /* Fotoğrafları varsayılan olarak daha koyu yapar */
 }
 
 .proje-overlay {

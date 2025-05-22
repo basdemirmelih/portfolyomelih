@@ -1,19 +1,68 @@
+/* basdemirmelih/portfolyomelih/portfolyomelih-4826ecf528031c12bcf3d98ad770e1f0a16e2fe3/src/styles/Skills.css */
 /* === NELER YAPABİLİRİM (YETENEKLER) BÖLÜMÜ STİLLERİ === */
 .yetkinlikler-liste {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px;
-    /* Eğer tüm satırlardaki öğelerin dikeyde ortalanmasını isterseniz: */
-    /* align-items: start; /* Veya center, end, stretch (varsayılan stretch) */
+    gap: 30px; /* Kutular arası boşluk */
+    justify-items: center; /* Kutuları kendi grid alanlarında yatayda ortalar */
+}
+
+/* 4x2 Grid yapısı için */
+.yetkinlikler-liste-4x2 {
+    grid-template-columns: repeat(4, minmax(150px, 1fr)); /* 4 sütun */
+}
+
+/* Yeni logo görünümü için eklenen ana konteyner sınıfı */
+.skill-logos-container {
+    max-width: 1000px; /* 4 kartın sığabileceği ve ortalanabileceği bir genişlik */
+    margin: 0 auto; /* Tüm gridi ortalar */
 }
 
 .yetkinlik-item {
-    padding: 20px 0; /* Yetenek kutularının iç boşluğu */
-    /* İçeriklerin (h4, progress-bar-container) sola dayalı kalması için
-       özel bir hizalama belirtmeye gerek yok, varsayılan davranış bu olacaktır.
-       Eğer flex kullanılıyorsa, align-items: flex-start; varsayılan olabilir.
-    */
-    /* Önceki denemelerden kalan hizalama kodlarını temizleyelim */
+    background-color: #202020; /* Arka plan rengi Kısa Bilgiler kutusuyla aynı yapıldı */
+    padding: 25px 20px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Grid yapısı içinde kendi alanını doldurur */
+    max-width: 200px; /* Kutuların çok büyümesini engelle, 4'lü sıra için ayarlandı */
+    min-height: 180px; /* Kutuların yüksekliğini eşitlemek için */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Eğer boş bir item eklenirse (görünmez yapmak için) */
+.yetkinlik-item.empty-skill-item {
+    background-color: transparent;
+    box-shadow: none;
+    pointer-events: none; /* Tıklanamaz yapar */
+}
+.yetkinlik-item.empty-skill-item .skill-logo-wrapper,
+.yetkinlik-item.empty-skill-item h4 {
+    visibility: hidden; /* İçeriği gizler */
+}
+
+
+.yetkinlik-item:hover:not(.empty-skill-item) { /* Hover efektini boş item'lara uygulama */
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* İkonu sarmalayan div için stil */
+.skill-logo-wrapper {
+    margin-bottom: 15px; /* İkon ile başlık arası boşluk */
+}
+
+.skill-icon-large {
+    font-size: 4rem; /* İkon boyutunu büyüt */
+    color: var(--primary-accent); /* İkon rengi */
+    transition: color 0.3s ease;
+}
+
+.yetkinlik-item:hover:not(.empty-skill-item) .skill-icon-large { /* Hover efektini boş item'lara uygulama */
+    color: var(--text-color); /* Hover durumunda ikon rengi değişimi */
 }
 
 .yetkinlik-item h4 {
@@ -21,94 +70,59 @@
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 10px;
-    display: flex; /* İkon ve metni yan yana getirir */
-    align-items: center; /* Dikeyde ortalar */
-    /* justify-content: flex-start; /* İkon ve metni h4 içinde sola yaslar (varsayılan) */
+    margin-bottom: 0;
 }
-
-.yetkinlik-item h4 i {
-    color: var(--primary-accent);
-    font-size: 1.5rem;
-    margin-right: 15px;
-    width: 30px; /* İkonlar için sabit genişlik */
-    text-align: center; /* İkonu kendi 30px'lik alanında ortalar */
-}
-
-.progress-bar-container {
-    width: 100%; /* Progress bar'ın bulunduğu kutunun tamamını kaplaması için */
-    height: 8px;
-    background-color: var(--secondary-accent);
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.progress-bar {
-    height: 100%;
-    background-color: var(--primary-accent);
-    border-radius: 4px;
-    transition: width 1s ease-in-out;
-}
-
-/* === SADECE PYTHON YETENEK KUTUSUNU GRID ALANINDA ORTALAMA === */
-.yetkinlik-item.python-skill-item {
-    justify-self: center; /* Python kutusunu kendi grid sütununda/alanında yatayda ortalar */
-    /* Python kutusunun genişliği diğerleriyle aynı kalacak (minmax(300px, 1fr) ile belirlenir).
-       Bu kural sadece o kutunun, kendisine ayrılan alanda ortalanmasını sağlar.
-       Eğer Python kendi satırında tek öğe ise veya gridde ortalanabilecek bir konumdaysa çalışır.
-    */
-    width: 100%; /* Kendi grid alanının %100'ünü kullanır, ama justify-self onu ortalar.
-                    Eğer minmax(300px, 1fr) içindeki 300px'den daha dar olmasını
-                    istemiyorsanız bu satıra gerek yok, grid zaten boyutlandırır.
-                    Aslında, `justify-self` kullanırken `width: 100%` genellikle
-                    istenilen etkiyi vermez. `justify-self` öğenin *kendisini* ortalar.
-                    Grid sütununun genişliği `minmax(300px, 1fr)` ile belirlenir.
-                    Bu kural, o genişlikteki kutuyu ortalar.
-                    Eğer kutunun içeriği sola dayalı kalacaksa, `width` ile oynamaya gerek yok.
-                 */
-}
-
 
 /* === MOBİL UYUMLULUK İÇİN YETENEKLER BÖLÜMÜ STİLLERİ === */
+@media (max-width: 992px) { /* Tabletler için 2xN düzeni (veya daha esnek auto-fit) */
+    .yetkinlikler-liste-4x2 {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Daha esnek */
+        max-width: 600px; /* 2 veya 3 kart sığacak şekilde */
+    }
+    .yetkinlik-item {
+        max-width: 180px;
+        min-height: 160px;
+    }
+}
+
+
 @media (max-width: 768px) {
-    .yetkinlikler-liste {
-        grid-template-columns: 1fr; /* Tek sütunlu düzen */
-        gap: 30px;
+    .yetkinlikler-liste { /* Genel .yetkinlikler-liste için */
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+    }
+    .yetkinlikler-liste-4x2 { /* 4x2'lik özel liste için mobildeki ayar */
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Mobilde sütun sayısını azalt */
+        max-width: 500px; /* Mobilde 2 veya 3 kart sığacak şekilde */
     }
 
     .yetkinlik-item {
-        /* Mobilde tüm yetenek kutuları zaten tek sütunda tam genişlikte olur.
-           Eğer mobilde de Python'ı ortalamak (veya tümünü ortalamak) gibi bir niyet yoksa
-           özel bir ayara gerek yok.
-        */
+        padding: 20px 15px;
+        max-width: 160px; /* Mobilde kutu genişliği */
+        min-height: 150px;
     }
 
-    .yetkinlik-item.python-skill-item {
-        /* Mobilde tek sütun olduğu için `justify-self: center;` yine de
-           Python kutusunu yatayda ortalamaya çalışacaktır.
-           Eğer tek sütunda tüm öğeler zaten ekranı kaplıyorsa,
-           bu kuralın gözle görülür bir etkisi olmayabilir,
-           ya da kutunun içeriği (sola dayalı olan) ortalanmış gibi görünebilir
-           eğer kutu ekranı tam kaplamıyorsa.
-           Genellikle tek sütunda `justify-self`e gerek kalmaz veya
-           tüm item'lar için genel bir ortalama (örn: margin: 0 auto with a set width)
-           tercih edilir.
-        */
-        justify-self: stretch; /* Mobilde varsayılana (tam genişliğe yayılma) dönebiliriz */
-        /* Veya 'center' olarak bırakıp gözlemleyebilirsiniz. */
-        /* Eğer mobilde Python kutusunun genişliğini daraltıp ortalamak isterseniz: */
-        /* width: 90%; */
-        /* margin: 0 auto; */
-        /* justify-self: initial; /* veya stretch */
+    .skill-icon-large {
+        font-size: 3rem; /* Mobilde ikon boyutu */
     }
 
     .yetkinlik-item h4 {
         font-size: 1rem;
     }
+}
 
-    .yetkinlik-item h4 i {
-        font-size: 1.3rem;
-        margin-right: 10px;
+@media (max-width: 480px) {
+    .yetkinlikler-liste,
+    .yetkinlikler-liste-4x2 {
+        grid-template-columns: repeat(2, minmax(120px, 1fr)); /* Çok küçük ekranlarda 2 sütun */
+        gap: 15px;
+        max-width: 340px; /* İki kart sığacak şekilde */
+    }
+    .yetkinlik-item {
+        max-width: 140px; /* Çok küçük ekranlar için kutu genişliği */
+        min-height: 130px;
+    }
+    .skill-icon-large {
+        font-size: 2.5rem;
     }
 }

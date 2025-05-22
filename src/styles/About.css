@@ -1,3 +1,4 @@
+/* basdemirmelih/portfolyomelih/portfolyomelih-4826ecf528031c12bcf3d98ad770e1f0a16e2fe3/src/styles/About.css */
 /* === HAKKIMDA BÖLÜMÜ STİLLERİ === */
 /* #hakkimda .container genel 'bolum' ve 'container' stillerini (index.css veya App.css) kullanır. */
 /* Özel flex düzeni için: */
@@ -134,7 +135,8 @@
     align-items: flex-start; /* Öğeleri dikeyde yukarıda hizala */
     margin-bottom: 18px;
     padding: 12px;
-    background-color: var(--secondary-accent); /* Liste elemanı arka planı */
+    background-color: #333333; /* Liste elemanı arka planı koyulaştırıldı (Örnek: #333333) */
+    /* Alternatif: var(--secondary-accent) yerine daha koyu bir ton: #2E2E2E */
     border-radius: 3px;
     border-left: 3px solid var(--primary-accent); /* Sol tarafta vurgu çizgisi */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -224,8 +226,6 @@
         flex-direction: column;
         gap: 20px;
     }
-    /* .bilgiler-alt-satir > .bilgi-kutusu zaten flex:1 ve min-width ile yönetiliyor,
-       flex-direction: column olduğunda alt alta düzgün sıralanacaktır. */
 }
 
 @media (max-width: 768px) { /* Telefonlar için */
