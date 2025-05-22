@@ -1,15 +1,15 @@
 /* === PORTFOLYO BÖLÜMÜ STİLLERİ === */
 .portfolyo-galeri {
     display: grid;
-    /* Sütunlar: En az 340px genişliğinde, sığdığı kadar sütun oluştur, kalan alanı eşit paylaştır */
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    /* Sütunlar: En az 320px genişliğinde, sığdığı kadar sütun oluştur, kalan alanı eşit paylaştır */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 30px; /* Kartlar arası boşluk */
 }
 
 .proje-kart {
     position: relative; /* Overlay'in pozisyonlanması için */
     overflow: hidden; /* Taşan kısımları (özellikle büyüyen resim) gizle */
-    border-radius: 4px; /* Kart köşelerini yuvarlat */
+    border-radius: 8px; /* Kart köşelerini yuvarlat (arttırıldı) */
     background-color: var(--secondary-accent); /* Resim yüklenene kadar veya resim yoksa arka plan */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge */
     transition: transform 0.3s ease-out; /* Kartın kendisine hover efekti için (opsiyonel) */
@@ -22,7 +22,7 @@
 
 .proje-kart img {
     width: 100%;
-    height: 300px; /* Kart resim yüksekliği, isteğe bağlı ayarlanabilir */
+    height: 280px; /* Kart resim yüksekliği (azaltıldı) */
     object-fit: cover; /* Resmi kırparak sığdırır, oranını korur */
     display: block; /* Altında oluşabilecek boşluğu engeller */
     transition: transform 0.5s ease, filter 0.5s ease; /* Resim hover efektleri için yumuşak geçiş */
@@ -93,7 +93,7 @@
         gap: 25px; /* Kartlar arası boşluk biraz azaltılabilir */
     }
     .proje-kart img {
-        height: 250px; /* Mobilde resim yüksekliği biraz azaltılabilir */
+        height: 230px; /* Mobilde resim yüksekliği biraz azaltılabilir (değiştirildi) */
     }
     .proje-overlay {
         padding: 20px; /* Mobilde overlay padding'i biraz azaltılabilir */
@@ -108,11 +108,11 @@
 
 @media (max-width: 480px) { /* Çok küçük ekranlar için */
     .portfolyo-galeri {
-        /* minmax(340px, 1fr) zaten küçük ekranlarda tek sütuna düşürecektir, */
+        /* minmax(320px, 1fr) zaten küçük ekranlarda tek sütuna düşürecektir, */
         /* ancak daha hassas kontrol için minmax'in minimum değeri düşürülebilir veya doğrudan 1fr kalabilir. */
         /* Örneğin: grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); */
     }
     .proje-kart img {
-        height: 220px;
+        height: 200px; /* (değiştirildi) */
     }
 }
