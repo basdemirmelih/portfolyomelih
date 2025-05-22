@@ -1,85 +1,114 @@
 /* === NELER YAPABİLİRİM (YETENEKLER) BÖLÜMÜ STİLLERİ === */
 .yetkinlikler-liste {
     display: grid;
-    /* Sütunlar: En az 300px genişliğinde, sığdığı kadar sütun oluştur, kalan alanı eşit paylaştır */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px; /* Yetenek öğeleri arası dikey ve yatay boşluk */
+    gap: 40px;
+    /* Eğer tüm satırlardaki öğelerin dikeyde ortalanmasını isterseniz: */
+    /* align-items: start; /* Veya center, end, stretch (varsayılan stretch) */
 }
 
 .yetkinlik-item {
-    padding: 20px 0; /* Her yetenek öğesi için üst ve alt padding */
-    /* background-color: var(--secondary-accent); */ /* Opsiyonel: Arka plan rengi */
-    /* border-radius: 4px; */ /* Opsiyonel: Köşe yuvarlatma */
-    /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */ /* Opsiyonel: Hafif gölge */
+    padding: 20px 0; /* Yetenek kutularının iç boşluğu */
+    /* İçeriklerin (h4, progress-bar-container) sola dayalı kalması için
+       özel bir hizalama belirtmeye gerek yok, varsayılan davranış bu olacaktır.
+       Eğer flex kullanılıyorsa, align-items: flex-start; varsayılan olabilir.
+    */
+    /* Önceki denemelerden kalan hizalama kodlarını temizleyelim */
 }
 
 .yetkinlik-item h4 {
-    font-family: var(--font-body); /* Veya --font-heading, tercihinize bağlı */
-    font-size: 1.1rem; /* Yetenek başlığı boyutu */
+    font-family: var(--font-body);
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 10px; /* Başlık ile progress bar arası boşluk */
-    display: flex; /* İkon ve metni yan yana getirmek için */
-    align-items: center; /* Dikeyde ortala */
+    margin-bottom: 10px;
+    display: flex; /* İkon ve metni yan yana getirir */
+    align-items: center; /* Dikeyde ortalar */
+    /* justify-content: flex-start; /* İkon ve metni h4 içinde sola yaslar (varsayılan) */
 }
 
-.yetkinlik-item h4 i { /* İkon stilleri */
-    color: var(--primary-accent); /* Ana vurgu rengi */
-    font-size: 1.5rem; /* İkon boyutu */
-    margin-right: 15px; /* İkon ile metin arası boşluk */
-    width: 30px; /* İkonlar için sabit genişlik, hizalamaya yardımcı olur */
-    text-align: center; /* İkonu kendi alanında ortala */
+.yetkinlik-item h4 i {
+    color: var(--primary-accent);
+    font-size: 1.5rem;
+    margin-right: 15px;
+    width: 30px; /* İkonlar için sabit genişlik */
+    text-align: center; /* İkonu kendi 30px'lik alanında ortalar */
 }
 
 .progress-bar-container {
-    width: 100%;
-    height: 8px; /* Progress bar yüksekliği */
-    background-color: var(--secondary-accent); /* Progress bar arka planı (boş kısım) */
-    border-radius: 4px; /* Köşeleri yuvarlat */
-    overflow: hidden; /* İçindeki progress-bar'ın taşmasını engelle */
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); /* Hafif iç gölge (opsiyonel) */
+    width: 100%; /* Progress bar'ın bulunduğu kutunun tamamını kaplaması için */
+    height: 8px;
+    background-color: var(--secondary-accent);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .progress-bar {
     height: 100%;
-    background-color: var(--primary-accent); /* Dolu progress bar rengi */
-    border-radius: 4px; /* Köşeleri yuvarlat (container ile aynı olmalı) */
-    transition: width 1s ease-in-out; /* Genişlik değişiminde yumuşak animasyon */
-    display: flex; /* İçine yüzde metni eklenirse hizalamak için (opsiyonel) */
-    align-items: center; /* Opsiyonel */
-    justify-content: flex-end; /* Opsiyonel */
+    background-color: var(--primary-accent);
+    border-radius: 4px;
+    transition: width 1s ease-in-out;
 }
 
-/* Opsiyonel: Progress bar içindeki yüzde metni için stil */
-/*
-.progress-percentage {
-    color: var(--text-color);
-    font-size: 0.7rem;
-    padding-right: 5px;
-    font-weight: bold;
+/* === SADECE PYTHON YETENEK KUTUSUNU GRID ALANINDA ORTALAMA === */
+.yetkinlik-item.python-skill-item {
+    justify-self: center; /* Python kutusunu kendi grid sütununda/alanında yatayda ortalar */
+    /* Python kutusunun genişliği diğerleriyle aynı kalacak (minmax(300px, 1fr) ile belirlenir).
+       Bu kural sadece o kutunun, kendisine ayrılan alanda ortalanmasını sağlar.
+       Eğer Python kendi satırında tek öğe ise veya gridde ortalanabilecek bir konumdaysa çalışır.
+    */
+    width: 100%; /* Kendi grid alanının %100'ünü kullanır, ama justify-self onu ortalar.
+                    Eğer minmax(300px, 1fr) içindeki 300px'den daha dar olmasını
+                    istemiyorsanız bu satıra gerek yok, grid zaten boyutlandırır.
+                    Aslında, `justify-self` kullanırken `width: 100%` genellikle
+                    istenilen etkiyi vermez. `justify-self` öğenin *kendisini* ortalar.
+                    Grid sütununun genişliği `minmax(300px, 1fr)` ile belirlenir.
+                    Bu kural, o genişlikteki kutuyu ortalar.
+                    Eğer kutunun içeriği sola dayalı kalacaksa, `width` ile oynamaya gerek yok.
+                 */
 }
-*/
 
 
 /* === MOBİL UYUMLULUK İÇİN YETENEKLER BÖLÜMÜ STİLLERİ === */
-@media (max-width: 768px) { /* Telefonlar için (orijinaldeki gibi tek sütun) */
+@media (max-width: 768px) {
     .yetkinlikler-liste {
         grid-template-columns: 1fr; /* Tek sütunlu düzen */
-        gap: 30px; /* Yetenek öğeleri arası boşluk biraz azaltılabilir */
+        gap: 30px;
     }
+
+    .yetkinlik-item {
+        /* Mobilde tüm yetenek kutuları zaten tek sütunda tam genişlikte olur.
+           Eğer mobilde de Python'ı ortalamak (veya tümünü ortalamak) gibi bir niyet yoksa
+           özel bir ayara gerek yok.
+        */
+    }
+
+    .yetkinlik-item.python-skill-item {
+        /* Mobilde tek sütun olduğu için `justify-self: center;` yine de
+           Python kutusunu yatayda ortalamaya çalışacaktır.
+           Eğer tek sütunda tüm öğeler zaten ekranı kaplıyorsa,
+           bu kuralın gözle görülür bir etkisi olmayabilir,
+           ya da kutunun içeriği (sola dayalı olan) ortalanmış gibi görünebilir
+           eğer kutu ekranı tam kaplamıyorsa.
+           Genellikle tek sütunda `justify-self`e gerek kalmaz veya
+           tüm item'lar için genel bir ortalama (örn: margin: 0 auto with a set width)
+           tercih edilir.
+        */
+        justify-self: stretch; /* Mobilde varsayılana (tam genişliğe yayılma) dönebiliriz */
+        /* Veya 'center' olarak bırakıp gözlemleyebilirsiniz. */
+        /* Eğer mobilde Python kutusunun genişliğini daraltıp ortalamak isterseniz: */
+        /* width: 90%; */
+        /* margin: 0 auto; */
+        /* justify-self: initial; /* veya stretch */
+    }
+
     .yetkinlik-item h4 {
-        font-size: 1rem; /* Mobilde başlık biraz küçülebilir */
+        font-size: 1rem;
     }
+
     .yetkinlik-item h4 i {
-        font-size: 1.3rem; /* Mobilde ikon biraz küçülebilir */
+        font-size: 1.3rem;
         margin-right: 10px;
     }
 }
-
-/*
-@media (max-width: 480px) { // Çok küçük ekranlar için ek ayarlar
-    .yetkinlik-item h4 {
-        font-size: 0.9rem;
-    }
-}
-*/
