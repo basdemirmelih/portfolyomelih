@@ -105,8 +105,8 @@
     .hero-buttons-wrapper .btn {
         width: fit-content; /* Butonların içeriği kadar geniş olmasını sağlar */
         min-width: 220px; /* Butonlar için minimum genişlik (isteğe bağlı) */
-        padding: 12px 25px; /* Mobilde buton iç boşluğunu biraz azalt */
-        font-size: 0.95rem; /* Mobilde buton yazı boyutunu biraz azalt */
+        padding: 10px 20px; /* Mobilde buton iç boşluğu biraz daha küçültüldü */
+        font-size: 0.9rem; /* Mobilde buton yazı boyutu biraz daha küçültüldü */
     }
 }
 
@@ -120,8 +120,8 @@
     }
 
     .hero-buttons-wrapper .btn {
-        padding: 10px 20px; /* Çok küçük ekranlar için buton iç boşluğunu daha da azalt */
-        font-size: 0.85rem; /* Çok küçük ekranlar için buton yazı boyutunu daha da azalt */
+        padding: 8px 18px; /* Çok küçük ekranlar için buton iç boşluğu daha da küçültüldü */
+        font-size: 0.8rem; /* Çok küçük ekranlar için buton yazı boyutu daha da küçültüldü */
         min-width: 180px; /* Çok küçük ekranlar için minimum genişlik */
     }
 }
