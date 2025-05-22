@@ -20,6 +20,7 @@
 }
 
 .hero-icerik h1 {
+    /* font-family: var(--font-heading); Bu zaten index.css'ten gelmeli */
     font-size: 4.5rem;
     font-weight: 700;
     color: var(--text-color);
@@ -33,41 +34,41 @@
 }
 
 .hero-altbaslik {
-    font-family: var(--font-body);
+    font-family: var(--font-body); /* index.css'ten gelmeli */
     font-size: 1.5rem;
-    color: var(--light-accent);
+    color: var(--light-accent); /* index.css'ten gelmeli */
     margin-bottom: 40px;
     font-weight: 400;
-    min-height: 2.5em; /* Masaüstü için satır kaymalarını önlemek için */
-    line-height: 1.4;  /* Satır yüksekliğini biraz artırarak okunabilirliği ve alanı garantileyebiliriz */
+    min-height: 2.5em; /* Satır kaymalarını önlemek için */
 }
 
 #typed-text {
     font-weight: 600;
-    color: var(--text-color);
-    border-bottom: 2px solid var(--primary-accent);
+    color: var(--text-color); /* index.css'ten gelmeli */
+    border-bottom: 2px solid var(--primary-accent); /* index.css'ten gelmeli */
     padding-bottom: 2px;
 }
 
 .typed-cursor {
     opacity: 1;
     animation: blink 0.7s infinite;
-    color: var(--primary-accent);
+    color: var(--primary-accent); /* index.css'ten gelmeli */
     margin-left: 1px;
     font-weight: 600;
     display: inline-block;
 }
 
+/* Buton sarmalayıcısı için stiller */
 .hero-buttons-wrapper {
-    display: flex;
+    display: flex; /* Masaüstünde butonları yan yana dizer */
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 15px; /* Butonlar arası boşluk */
     margin-top: 40px;
-    justify-content: flex-start;
+    justify-content: flex-start; /* Masaüstünde sola yaslı */
 }
 
 .hero-buttons-wrapper .btn {
-    margin: 0;
+    margin: 0; /* Bireysel margin'leri sıfırla */
 }
 
 
@@ -78,34 +79,34 @@
     }
     .hero-altbaslik {
         font-size: 1.3rem;
-        min-height: 2.6em; /* 1.3rem * 2 satır (yaklaşık) = 2.6em. Gerekirse artırın. */
-        line-height: 1.4;
+        min-height: 2.3em;
     }
 }
 
 @media (max-width: 768px) {
     #ana-sayfa {
         min-height: 600px;
+        /* İsteğe bağlı: Mobilde tüm hero içeriğini ortalamak için */
+        /* text-align: center; */
     }
     .hero-icerik {
         padding-top: 80px;
+        /* Eğer üstteki text-align: center aktif edilirse,
+           burada da hizalamayı kontrol etmek gerekebilir.
+           Şu anki haliyle .hero-icerik sola dayalı kalır. */
     }
-    .hero-altbaslik { /* 768px için de min-height ayarı eklendi/güncellendi */
-        font-size: 1.3rem; /* 992px ile aynı kalabilir veya özelleşebilir */
-        min-height: 3.0em; /* Örnek: İki satırlık uzun metin için. (1.3rem * 1.4 line-height * 2 satır ~ 3.64rem -> ~2.8em-3em ) */
-        /* Tarayıcıda test ederek en uygun değeri bulun. */
-        line-height: 1.45; /* Satır yüksekliğini mobil için biraz daha ayarlayabilirsiniz */
-    }
+
     .hero-buttons-wrapper {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
+        flex-direction: column; /* Butonları dikey olarak sıralar */
+        align-items: center; /* Buton bloklarını yatayda ortalar */
+        gap: 15px; /* Dikey sıralanmış butonlar arasındaki boşluk */
     }
+
     .hero-buttons-wrapper .btn {
-        width: fit-content;
-        min-width: 220px;
-        padding: 12px 25px;
-        font-size: 0.95rem;
+        width: fit-content; /* Butonların içeriği kadar geniş olmasını sağlar */
+        min-width: 220px; /* Butonlar için minimum genişlik (isteğe bağlı) */
+        padding: 12px 25px; /* Mobilde buton iç boşluğunu biraz azalt */
+        font-size: 0.95rem; /* Mobilde buton yazı boyutunu biraz azalt */
     }
 }
 
@@ -115,14 +116,13 @@
     }
     .hero-altbaslik {
         font-size: 1.1rem;
-        min-height: 3.3em; /* Örnek: İki uzun satır için (1.1rem * 1.5 line-height * 2 satır ~ 3.3rem). */
-        /* Tarayıcıda test ederek en uygun değeri bulun. */
-        line-height: 1.5;  /* Daha küçük font için satır yüksekliği biraz daha fazla olabilir */
+        min-height: 2em;
     }
+
     .hero-buttons-wrapper .btn {
-        padding: 10px 20px;
-        font-size: 0.85rem;
-        min-width: 180px;
+        padding: 10px 20px; /* Çok küçük ekranlar için buton iç boşluğunu daha da azalt */
+        font-size: 0.85rem; /* Çok küçük ekranlar için buton yazı boyutunu daha da azalt */
+        min-width: 180px; /* Çok küçük ekranlar için minimum genişlik */
     }
 }
 

@@ -6,7 +6,7 @@ import '../styles/Hero.css'; // Hero bölümüne özel stiller
 
 const Hero = () => {
     const typedStrings = [
-        'Bilgisayar Mühendisliği Öğrencisi',
+        'Bilgisayar Mühendisi Adayı',
         'Web Geliştirici',
         'Sürekli Öğrenci',
         'Teknoloji Tutkunu',
