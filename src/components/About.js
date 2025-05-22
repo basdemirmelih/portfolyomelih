@@ -21,7 +21,7 @@ const About = () => {
                             <h2 className="hakkimda-bolum-baslik">Ben Kimim?</h2>
                         </div>
                         <div className="hakkimda-metin">
-                            <h3>Merhaba, ben Melih Başdemir. Kodlar ve algoritmalarla çalışarak geleceğe katkı sağlamayı hedefleyen bir öğrenciyim.</h3>
+                            <h3>Merhaba, ben Melih Başdemir. Kodlar ve algoritmalarla çalışarak geleceğe katkı sağlamayı hedefleyen bir Bilgisayar Mühendisi Adayıyım.</h3>
                             <p>
                                 Bilgisayar Mühendisliği 2. sınıf öğrencisiyim. Yazılım geliştirmeye ilgi duyuyor, bu alanda kendimi sürekli geliştirmeye çalışıyorum.
                                 Kod yazarken problem çözmeye ve mantıklı yapılar kurmaya odaklanıyorum. Aynı zamanda kullanıcı deneyimi ve tasarım gibi alanlara da ilgi duyuyorum. Öğrenmeye açık biriyim ve projelere hem teknik hem de görsel açıdan katkı sağlamayı önemsiyorum.
