@@ -19,7 +19,7 @@ const Skills = () => {
     return (
         <section id="neler-yapabilirim" className="bolum">
             <div className="container">
-                <h2 className="bolum-baslik">Neler Yapabilirim?</h2>
+                <h2 className="bolum-baslik">Teknik Beceriler</h2>
                 {/* Grid'i 4x2 yapmak için özel bir sınıf ekleyebiliriz */}
                 <div className="yetkinlikler-liste skill-logos-container yetkinlikler-liste-4x2">
                     {skillsData.map((skill) => (
