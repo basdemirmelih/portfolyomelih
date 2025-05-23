@@ -1,6 +1,6 @@
-/* basdemirmelih/portfolyomelih/portfolyomelih-4826ecf528031c12bcf3d98ad770e1f0a16e2fe3/src/styles/Skills.css */
+/* basdemirmelih/portfolyomelih/portfolyomelih-73b8b3e8c0a54c98dccb272ed81ceaef4b3d1da6/src/styles/Skills.css */
 
-/* === MEVCUT YETENEK İKONLARI BÖLÜMÜ STİLLERİ (Değişiklik yok) === */
+/* === MEVCUT YETENEK İKONLARI BÖLÜMÜ STİLLERİ === */
 .yetkinlikler-liste {
     display: grid;
     gap: 30px;
@@ -17,7 +17,7 @@
 }
 
 .yetkinlik-item {
-    background-color: #202020;
+    background-color: #202020; /* Bu renk kullanılacak */
     padding: 25px 20px;
     border-radius: 8px;
     text-align: center;
@@ -69,52 +69,45 @@
     margin-bottom: 0;
 }
 
-/* === ESKİ .neler-yapabilirim-aciklama STİLLERİ KALDIRILDI === */
-
 /* === YENİ KART TABANLI "NELER YAPABİLİRİM?" (YETKİNLİKLER) BÖLÜMÜ STİLLERİ === */
 .capabilities-section {
-    margin-top: 60px; /* Teknik beceri ikonları ile arasında boşluk */
+    margin-top: 60px;
     padding-top: 40px;
-    /* border-top: 1px solid #3a3a3a; /* İsteğe bağlı ayırıcı çizgi */
 }
 
-.bolum-alt-baslik { /* Yeni eklenen alt başlık için stil */
-    font-size: 2em; /* Ana başlık (Teknik Becerilerim) ile uyumlu veya biraz daha küçük */
-    font-family: var(--font-display, var(--font-body)); /* Varsa display fontu, yoksa body fontu */
-    color: var(--text-color);
-    margin-bottom: 40px; /* Başlık ile kartlar arası boşluk */
-    text-align: center;
+.capabilities-section > h3.bolum-baslik {
+    font-size: 2.2rem;
 }
 
 .capabilities-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Esnek grid yapısı */
-    gap: 30px; /* Kartlar arası boşluk */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
 }
 
 .capability-card {
-    background-color: #2c2c2c; /* Mevcut yetkinlik-item'dan biraz farklı veya aynı (#202020) olabilir */
+    background-color: #202020; /* Değiştirildi: #2c2c2c yerine #202020 */
     padding: 30px 25px;
-    border-radius: 12px; /* Daha yuvarlak köşeler */
+    border-radius: 12px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* İçeriği yukarıdan başlat */
+    justify-content: flex-start;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    min-height: 320px; /* Kart yüksekliklerini dengelemek için */
+    min-height: 320px;
 }
 
 .capability-card:hover {
-    transform: translateY(-8px) scale(1.03); /* Hafif yukarı kalkma ve büyüme */
-    box-shadow: 0 8px 25px rgba(var(--primary-accent-rgb, 0, 123, 255), 0.15); /* Vurgu rengiyle gölge, --primary-accent-rgb tanımlı olmalı */
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 8px 25px rgba(255, 74, 28, 0.15); /* Turuncu ışık efekti */
 }
 
 .capability-card-icon-wrapper {
-    width: 80px; /* İkon arka plan boyutu */
+    width: 80px;
     height: 80px;
-    border-radius: 50%; /* Dairesel arka plan */
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -127,26 +120,17 @@
     transform: scale(1.1);
 }
 
-/* İkon arka planları için renk tanımlamaları */
-/* CSS değişkenlerinizde --primary-accent-darker gibi renkler tanımlayabilirsiniz */
-/* Ya da projenizdeki var(--primary-accent) ve var(--secondary-accent) gibi değişkenleri kullanabilirsiniz */
-/* Örnek: --my-pink-start, --my-pink-end, --my-blue-start gibi değişkenler tanımlayıp burada kullanın */
-
-/* Aşağıdaki renkler örnektir, projenizin paletine göre --primary-accent ve diğerlerini kullanın */
 :root {
-    /* Bu renkler sadece örnek amaçlıdır, kendi global renklerinizi kullanın */
-    /* Eğer --primary-accent pembe ise: */
     --accent-color-1-start: var(--primary-accent);
-    --accent-color-1-end: color-mix(in srgb, var(--primary-accent) 80%, black); /* Koyu pembe tonu */
+    --accent-color-1-end: color-mix(in srgb, var(--primary-accent) 80%, black);
 
-    /* Farklı bir ana renk veya ikincil renk varsa: */
-    --accent-color-2-start: #3498db; /* Örnek Mavi */
+    --accent-color-2-start: #3498db;
     --accent-color-2-end: #2980b9;
 
-    --accent-color-3-start: #2ecc71; /* Örnek Yeşil */
+    --accent-color-3-start: #2ecc71;
     --accent-color-3-end: #27ae60;
 
-    --accent-color-4-start: #f39c12; /* Örnek Turuncu */
+    --accent-color-4-start: #f39c12;
     --accent-color-4-end: #e67e22;
 }
 
@@ -164,13 +148,13 @@
 }
 
 .capability-card-icon {
-    font-size: 2.5rem; /* İkon boyutu */
-    color: #ffffff; /* İkon rengi (arka plan gradient olduğu için genellikle beyaz iyi durur) */
+    font-size: 2.5rem;
+    color: #ffffff;
 }
 
 .capability-card-title {
-    font-family: var(--font-display, var(--font-body));
-    font-size: 1.5em; /* Başlık boyutu */
+
+    font-size: 1.5em;
     font-weight: 700;
     color: var(--text-color);
     margin-bottom: 15px;
@@ -181,12 +165,12 @@
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--text-color);
-    opacity: 0.85; /* Açıklama metni biraz daha soluk olabilir */
-    flex-grow: 1; /* Kart yüksekliğini eşitlemek için esneklik sağlar */
+    opacity: 0.85;
+    flex-grow: 1;
 }
 
 
-/* === MOBİL UYUMLULUK İÇİN YETENEKLER BÖLÜMÜ STİLLERİ (Mevcutlar devam ediyor) === */
+/* === MOBİL UYUMLULUK İÇİN YETENEKLER BÖLÜMÜ STİLLERİ === */
 @media (max-width: 992px) {
     .yetkinlikler-liste-4x2 {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -197,12 +181,15 @@
         min-height: 160px;
     }
 
-    /* Yeni Kartlar için Mobil Uyum */
+    .capabilities-section > h3.bolum-baslik {
+        font-size: 2rem;
+    }
+
     .capabilities-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
     .capability-card {
-        min-height: auto; /* Mobilde otomatik yükseklik */
+        min-height: auto;
         padding: 25px 20px;
     }
     .capability-card-title {
@@ -210,9 +197,6 @@
     }
     .capability-card-description {
         font-size: 0.9rem;
-    }
-    .bolum-alt-baslik {
-        font-size: 1.8em;
     }
 }
 
@@ -231,14 +215,13 @@
     .skill-icon-large { font-size: 3rem; }
     .yetkinlik-item h4 { font-size: 1rem; }
 
-    /* Yeni Kartlar için Mobil Uyum */
+    .capabilities-section > h3.bolum-baslik {
+        font-size: 1.8rem;
+    }
+
     .capabilities-section {
         margin-top: 40px;
         padding-top: 30px;
-    }
-    .bolum-alt-baslik {
-        font-size: 1.6em;
-        margin-bottom: 30px;
     }
     .capabilities-grid {
         gap: 20px;
@@ -259,9 +242,12 @@
     }
     .skill-icon-large { font-size: 2.5rem; }
 
-    /* Yeni Kartlar için Mobil Uyum */
+    .capabilities-section > h3.bolum-baslik {
+        font-size: 1.6rem;
+    }
+
     .capabilities-grid {
-        grid-template-columns: 1fr; /* Çok küçük ekranlarda tek sütun */
+        grid-template-columns: 1fr;
     }
     .capability-card-icon-wrapper {
         width: 70px;
@@ -273,8 +259,5 @@
     }
     .capability-card-title {
         font-size: 1.2em;
-    }
-    .bolum-alt-baslik {
-        font-size: 1.4em;
     }
 }
