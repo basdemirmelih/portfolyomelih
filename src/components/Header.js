@@ -11,7 +11,7 @@ const Header = () => {
     const navLinksData = useMemo(() => [
         { href: '#ana-sayfa', text: 'Anasayfa', id: 'ana-sayfa' },
         { href: '#hakkimda', text: 'Ben Kimim?', id: 'hakkimda' },
-        { href: '#neler-yapabilirim', text: 'Teknik Beceriler', id: 'neler-yapabilirim' },
+        { href: '#neler-yapabilirim', text: 'Neler Yapabilirim?', id: 'neler-yapabilirim' },
         { href: '#portfolyo', text: 'Portfolyo', id: 'portfolyo' },
         { href: '#iletisim', text: 'İletişim', id: 'iletisim' },
     ], []);
