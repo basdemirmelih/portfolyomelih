@@ -8,7 +8,7 @@ const Hero = () => {
     const typedStrings = [
         'Mühendis Adayı',
         'Web Geliştirici',
-        'Sürekli Öğrenci',
+        'Siber Güvenlikçi',
         'Teknoloji Tutkunu',
     ]; //
 
