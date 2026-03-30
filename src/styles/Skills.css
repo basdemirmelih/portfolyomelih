@@ -155,8 +155,9 @@
     --accent-color-3-start: #2ecc71;
     --accent-color-3-end: #27ae60;
 
-    --accent-color-4-start: #f39c12;
-    --accent-color-4-end: #e67e22;
+    /* Siber Güvenlik kartı (accent-4) için mor tonları */
+    --accent-color-4-start: #9b59b6;
+    --accent-color-4-end: #8e44ad;
 }
 
 .capability-card-icon-wrapper.accent-1 {
