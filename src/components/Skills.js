@@ -1,7 +1,6 @@
 import React from 'react';
-import '../styles/Skills.css'; // Skills bölümüne özel stiller
+import '../styles/Skills.css'; // CSS dosyanızın yolu
 
-// Mevcut beceri ikonları için veri
 const skillsData = [
     { id: 'linux', name: 'Linux', iconClass: 'fab fa-linux', itemClassName: 'skill-logo-item' },
     { id: 'cybersecurity', name: 'Siber Güvenlik', iconClass: 'fas fa-shield-alt', itemClassName: 'skill-logo-item' },
@@ -15,7 +14,6 @@ const skillsData = [
     { id: 'sqlite', name: 'SQLite', iconClass: 'fas fa-database', itemClassName: 'skill-logo-item' },
 ];
 
-// "Neler Yapabilirim?" kartları için veri
 const capabilitiesDataMelih = [
     {
         id: 'cybersec',
@@ -29,7 +27,7 @@ const capabilitiesDataMelih = [
         title: 'Linux',
         description: 'Kali Linux başta olmak üzere Linux tabanlı sistemleri ve güvenlik araçlarını etkin biçimde kullanabiliyorum.',
         iconClass: 'fab fa-linux',
-        accentName: 'accent-linux'
+        accentName: 'accent-linux' // Linux'a özel renk sınıfı burada
     },
     {
         id: 'web-dev',
@@ -51,7 +49,7 @@ const capabilitiesDataMelih = [
         description: 'Karmaşık problemleri analiz etme, etkili algoritmalar tasarlama ve veri yapılarını kullanarak optimize çözümler geliştirme konularında yetkinim. Özellikle C# dilinde algoritmik düşünme becerilerimi aktif olarak kullanıyorum.',
         iconClass: 'fas fa-brain',
         accentName: 'accent-3',
-        centerLast: true  // alt satırda ortaya alınacak
+        centerLast: true
     },
 ];
 
@@ -64,7 +62,7 @@ const Skills = () => {
                     {capabilitiesDataMelih.map((capability) => (
                         <div
                             key={capability.id}
-                            className={`capability-card${capability.centerLast ? ' capability-card-center' : ''}`}
+                            className={`capability-card ${capability.centerLast ? 'capability-card-center' : ''}`}
                         >
                             <div className={`capability-card-icon-wrapper ${capability.accentName}`}>
                                 <i className={`${capability.iconClass} capability-card-icon`}></i>
@@ -77,7 +75,8 @@ const Skills = () => {
 
                 <div className="capabilities-section">
                     <h3 className="bolum-baslik">Teknik Becerilerim</h3>
-                    <div className="yetkinlikler-liste skill-logos-container yetkinlikler-liste-5x2">
+                    {/* 5x2 Grid sınıfı burada çağrılıyor */}
+                    <div className="yetkinlikler-liste yetkinlikler-liste-5x2">
                         {skillsData.map((skill) => (
                             <div className={`yetkinlik-item ${skill.itemClassName || ''}`} key={skill.id}>
                                 <div className="skill-logo-wrapper">
