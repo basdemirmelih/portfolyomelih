@@ -23,7 +23,7 @@ const About = () => {
                         <div className="hakkimda-metin">
                             <h3>Merhaba, ben Melih Başdemir. Yazılım geliştirme ve siber güvenlik alanlarında kendimi geliştirerek sistemleri geliştirme, savunma ve saldırı perspektifleriyle analiz etmeyi hedefleyen bir Bilgisayar Mühendisi adayıyım.</h3>
                             <p>
-                                Bilgisayar Mühendisliği 3. sınıf öğrencisiyim. Yazılım ve sistemler üzerine çalışırken hem güvenlik hem de genel mühendislik bakış açısıyla ilerlemeye özen gösteriyorum. Linux ortamları, temel siber güvenlik kavramları ile
+                                Bilgisayar Mühendisliği 3. sınıf öğrencisiyim. Yazılım ve sistemler üzerine çalışırken güvenlik ve genel mühendislik bakış açısıyla ilerlemeye özen gösteriyorum. Linux ortamları, temel siber güvenlik kavramları ile
                                 savunma ve saldırı perspektiflerini de öğrenerek sistemleri daha kapsamlı analiz etmeye çalışıyorum. Problem çözme, analitik düşünme ve mantıklı yapılar kurma konularına odaklanıyorum. Aynı zamanda sistemlerin nasıl çalıştığını
                                 anlamanın yanında, nasıl daha güvenli ve sağlam hale getirilebileceğini de öğrenmeye çalışıyorum.
                                 Öğrenmeye açık biriyim ve projelere hem teknik hem de analitik açıdan katkı sağlamayı önemsiyorum.
