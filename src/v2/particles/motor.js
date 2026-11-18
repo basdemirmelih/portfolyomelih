@@ -35,9 +35,10 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     } catch (e) {
         return null;
     }
-    const ADET = mobil ? 12000 : 30000;
+    // Telefonda daha az parçacık ve düşük piksel yoğunluğu: şekil aynı, işlemci yükü daha az.
+    const ADET = mobil ? 8000 : 30000;
     // Nokta bulutunda 1.5 üstü çözünürlük gözle fark edilmez ama GPU yükünü ikiye katlar.
-    const dpr = Math.min(window.devicePixelRatio || 1, mobil ? 1.25 : 1.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, mobil ? 1 : 1.5);
     renderer.setPixelRatio(dpr);
     kap.appendChild(renderer.domElement);
 
@@ -133,7 +134,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         kamera.lookAt(0, 0, 0);
         // Telefonda şekil üst yarıda durur. Şekli yukarı taşımak onu alttan görünür ve eğik yapıyordu;
         // bunun yerine kameranın görüntüsü kaydırılır, şekil tam karşıdan görünür.
-        kaymaPx = dar ? H * 0.25 : 0;
+        // Şekil, menü ile alttaki yazı bloğunun arasındaki boşluğun ortasına gelir (yazı bloğu ~350px).
+        kaymaPx = dar ? Math.min(H * 0.3, 150) : 0;
         if (kaymaPx) kamera.setViewOffset(W, H, 0, kaymaPx, W, H); else kamera.clearViewOffset();
         kamera.updateProjectionMatrix();
         gorunur.h = 2 * z * yarimTan;
@@ -143,12 +145,19 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         u.uFogNear.value = z - 1.6;
         u.uFogFar.value = z + 9;
         const pikselBirim = (H * dpr) / (2 * yarimTan);
-        u.uSize.value = (dar ? 0.04 : 0.031) * pikselBirim;
+        u.uSize.value = (dar ? 0.046 : 0.031) * pikselBirim; // telefonda daha az ama biraz daha iri parçacık
         u.uRadius.value = dar ? 0.9 : 1.15;
         isimGecersiz = true;
     };
     boyutla();
-    window.addEventListener('resize', boyutla);
+    // Adres çubuğu yüzünden yalnızca yükseklik biraz değiştiyse (telefon) yeniden kurulmaz; şekiller zıplamaz.
+    const yenidenBoyutla = () => {
+        const yeniW = kap.clientWidth;
+        const yeniH = kap.clientHeight;
+        if (mobil && yeniW === W && Math.abs(yeniH - H) < 180) return;
+        boyutla();
+    };
+    window.addEventListener('resize', yenidenBoyutla);
 
     // Fare dünya koordinatına çevrilir; sayfadan çıkınca etki söner.
     const fare = { x: 999, y: 999, icinde: 0 };
@@ -257,7 +266,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         yokEt: () => {
             iptal = true;
             cancelAnimationFrame(raf);
-            window.removeEventListener('resize', boyutla);
+            window.removeEventListener('resize', yenidenBoyutla);
             window.removeEventListener('pointermove', fareHareket);
             document.documentElement.removeEventListener('pointerleave', fareCik);
             window.removeEventListener('blur', fareCik);

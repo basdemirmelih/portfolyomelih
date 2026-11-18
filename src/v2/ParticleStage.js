@@ -54,7 +54,8 @@ const ParticleStage = ({ fontlarHazir }) => {
         const tetik = azalt ? null : ScrollTrigger.create({
             trigger: bolum.current,
             start: 'top top',
-            end: () => `+=${window.innerHeight * 3.6}`,
+            // Telefonda dört alan arasında daha az kaydırma (ekranın 3 katı); masaüstünde 3,6 katı
+            end: () => `+=${window.innerHeight * (mobil ? 3 : 3.6)}`,
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,

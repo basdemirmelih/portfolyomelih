@@ -1,13 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap, useGSAP, hareketAzalt, git } from '../lib/anim';
 
+// İ harfi, I + yazı tipinin gövdesiyle aynı genişlikte, yatay ve daha alçak bir noktayla çizilir (v2.css .harf--i).
 const harfler = (metin) => metin.split('').map((h, i) => (
-    <span className="harf" key={i} aria-hidden="true">{h}</span>
+    h === 'İ'
+        ? <span className="harf harf--i" key={i} aria-hidden="true">I</span>
+        : <span className="harf" key={i} aria-hidden="true">{h}</span>
 ));
 
 // Giriş: ad ekranı enlemesine doldurur. "BAŞDEMİR" (üstte) yüz hizasında görselin arkasında kalır,
 // "MELİH" (altta) boyun hizasında önden geçer; yüz hiçbir yazının altında kalmaz.
 // fare hareketinde üç katman farklı miktarda kayar ve derinlik hissi verir.
+// Hayalet satırın harfleri ayrı sınıfta: parçacık örneklemesi (.isim .harf) onları saymaz.
+const hayaletHarfler = (metin) => metin.split('').map((h, i) => (
+    h === 'İ' ? <span className="harf-h harf--i" key={i}>I</span> : <span className="harf-h" key={i}>{h}</span>
+));
+
 const Hero = () => {
     const kok = useRef(null);
 
@@ -37,6 +45,7 @@ const Hero = () => {
             .fromTo('.giris-gorsel', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.8, ease: 'power4.inOut' }, 0.15)
             .from('.giris-gorsel img', { scale: 1.2, duration: 2.4, ease: 'power3.out' }, 0.15)
             .from('.isim .harf', { yPercent: 105, duration: 1.4, stagger: 0.045 }, 0.35)
+            .from('.isim .harf-h', { yPercent: 105, duration: 1.4, stagger: 0.045 }, 0.35)
             .from('.giris-alt > *, .giris-dip > *', { y: 16, opacity: 0, duration: 1, stagger: 0.08 }, 1.2);
 
         const katman = (sec, kat) => {
@@ -47,7 +56,7 @@ const Hero = () => {
                 kat,
             };
         };
-        const katmanlar = [katman('.isim-satir--ust', -10), katman('.giris-gorsel-ic', 16), katman('.isim-satir--alt', -26)];
+        const katmanlar = [katman('.isim-satir--ust', -10), katman('.isim-satir--hayalet', -10), katman('.giris-gorsel-ic', 16), katman('.isim-satir--alt', -26)];
         const hareket = contextSafe((e) => {
             const nx = e.clientX / window.innerWidth - 0.5;
             const ny = e.clientY / window.innerHeight - 0.5;
@@ -94,11 +103,12 @@ const Hero = () => {
                 <h1 className="isim" aria-label="Melih Başdemir">
                     <span className="isim-satir isim-satir--ust"><span className="isim-ic">{harfler('BAŞDEMİR')}</span></span>
                     <span className="isim-satir isim-satir--alt"><span className="isim-ic">{harfler('MELİH')}</span></span>
+                    <span className="isim-satir isim-satir--hayalet" aria-hidden="true"><span className="isim-ic">{hayaletHarfler('BAŞDEMİR')}</span></span>
                 </h1>
                 <div className="giris-alt">
                     <p className="giris-cumle">
-                        Siber güvenlik odaklı bilgisayar mühendisi adayı. Tehditleri analiz ediyor;
-                        yazılım, mobil ve oyun geliştiriyorum.
+                        Kodun iki tarafındayım: yazan da, kıran da. Tehditleri okuyor,
+                        güvenli sistemler kuruyorum.
                     </p>
                     <div className="giris-baglantilar">
                         <a className="kare-link" href="#iletisim" onClick={(e) => { e.preventDefault(); git('#iletisim'); }}>

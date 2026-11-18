@@ -3,6 +3,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+// Telefonda adres çubuğu açılıp kapanınca ekran yüksekliği değişir. Bunu yeniden boyutlanma sayıp
+// her şeyi yeniden hesaplamak sabitlenen bölümü zıplatıyordu; yalnızca gerçek boyut değişimleri sayılır.
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 // Lenis örneği App içinde kurulur; menü ve "başa dön" buradan erişir.
 export const kaydirici = { lenis: null };

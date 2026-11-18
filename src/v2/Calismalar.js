@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollTrigger, gsap, hareketAzalt, kaydirici } from '../lib/anim';
+import Izgara from './Izgara';
 
 // İlk üçü çalışma (açık renkli geçiş kartı), son üçü başarı (koyu kart).
 // Arka yüz kartın boyuna göre yazıldı: kısa bir cümle, en fazla üç etiket, bir bağlantı.
@@ -11,10 +12,10 @@ const KARTLAR = [
         etiketler: ['OSINT', 'IOC', 'ATT&CK'],
     },
     {
-        id: 'LAB', tur: 'calisma', ust: 'Laboratuvar', buyuk: 'LAB', buyukAlt: '',
-        baslik: 'Siber güvenlik laboratuvarı', rol: 'Zafiyet analizi ve sızma testi', tarih: 'Sürüyor',
-        metin: 'Laboratuvar makinelerinde keşiften yetki yükseltmeye uçtan uca zafiyet analizi.',
-        etiketler: ['Nmap', 'Wireshark', 'Metasploit'],
+        id: 'CTF', tur: 'basari', ust: 'Yarışma', buyuk: 'Final', buyukAlt: '',
+        baslik: 'Siber Vatan', rol: 'CTF Türkiye finalisti', tarih: 'Türkiye finali',
+        metin: 'Siber Vatan programında CTF yarı finalini geçip Türkiye finaline kaldım.',
+        etiketler: ['CTF', 'Türkiye finali'],
     },
     {
         id: 'OYUN', tur: 'calisma', ust: 'GameJam', buyuk: '3.', buyukAlt: 'derece',
@@ -23,10 +24,10 @@ const KARTLAR = [
         etiketler: ['Unity', 'C#', 'Takım'],
     },
     {
-        id: 'CTF', tur: 'basari', ust: 'Yarışma', buyuk: 'Final', buyukAlt: '',
-        baslik: 'Siber Vatan', rol: 'CTF Türkiye finalisti', tarih: 'Türkiye finali',
-        metin: 'Siber Vatan programında CTF yarı finalini geçip Türkiye finaline kaldım.',
-        etiketler: ['CTF', 'Türkiye finali'],
+        id: 'LAB', tur: 'calisma', ust: 'Laboratuvar', buyuk: 'LAB', buyukAlt: '',
+        baslik: 'Siber güvenlik laboratuvarı', rol: 'Zafiyet analizi ve sızma testi', tarih: 'Sürüyor',
+        metin: 'Laboratuvar makinelerinde keşiften yetki yükseltmeye uçtan uca zafiyet analizi.',
+        etiketler: ['Nmap', 'Wireshark', 'Metasploit'],
     },
     {
         id: 'HACK', tur: 'basari', ust: 'Hackathon', buyuk: '1.', buyukAlt: 'derece',
@@ -216,6 +217,7 @@ const Calismalar = () => {
 
     return (
         <section className="calismalar" id="calismalar" ref={kok} data-renk="gece" aria-labelledby="calismalar-baslik">
+            <Izgara />
             <div className="calismalar-ust">
                 <h2 id="calismalar-baslik" className="genis-baslik">
                     <span>Çalışmalar</span>

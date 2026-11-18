@@ -9,7 +9,7 @@ const About = () => {
         if (hareketAzalt()) return;
         gsap.from('.hakkimda-buyuk .kelime > span', {
             yPercent: 110,
-            duration: 1.1,
+            duration: 1.2, // başlık açılışları sitede aynı ritimde
             stagger: 0.03,
             ease: 'power4.out',
             scrollTrigger: { trigger: '.hakkimda-buyuk', start: 'top 80%' },

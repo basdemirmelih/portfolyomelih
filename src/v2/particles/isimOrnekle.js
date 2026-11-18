@@ -22,17 +22,28 @@ export function isimOrnekle(adet, gorunur) {
     const sy = window.scrollY;
     harfler.forEach((h) => {
         const r = h.getBoundingClientRect();
-        const boyut = parseFloat(getComputedStyle(h).fontSize);
+        const stil = getComputedStyle(h);
+        const boyut = parseFloat(stil.fontSize);
+        // Kutunun üst dolgusu (İ noktası için) hesaba katılmaz: yalnızca harfin kendi alanı
+        const ust = parseFloat(stil.paddingTop) || 0;
+        const kutuUst = r.top + ust;
+        const kutuYuk = r.height - ust;
         ctx.font = `800 ${boyut}px "Archivo"`;
         const olcum = ctx.measureText(h.textContent);
         const cx = r.left + r.width / 2;
         // Harf kutusunun ortasını yazının görsel ortasına hizala
         const yukseklik = olcum.actualBoundingBoxAscent + olcum.actualBoundingBoxDescent;
-        const taban = r.top + sy + r.height / 2 + yukseklik / 2 - olcum.actualBoundingBoxDescent;
+        const taban = kutuUst + sy + kutuYuk / 2 + yukseklik / 2 - olcum.actualBoundingBoxDescent;
         ctx.save();
         ctx.translate(cx, taban);
         if (olcum.width > 0) ctx.scale((r.width * 0.97) / olcum.width, 1);
         ctx.fillText(h.textContent, 0, 0);
+        // İ: sayfadaki noktanın aynısı (v2.css .harf--i): gövde genişliğinde (.202em), .075em kalınlığında,
+        // büyük harfin (.70em) .065em üstünde. Çizim harfin ortasına göre yapıldığı için gövde merkezine kaydırılır.
+        if (h.classList.contains('harf--i')) {
+            const merkez = (-olcum.actualBoundingBoxLeft + olcum.actualBoundingBoxRight) / 2;
+            ctx.fillRect(merkez - 0.101 * boyut, -(0.70 + 0.065 + 0.075) * boyut, 0.202 * boyut, 0.075 * boyut);
+        }
         ctx.restore();
     });
 

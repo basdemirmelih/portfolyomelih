@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { kisi, baglantilar } from '../data';
 import { gsap, useGSAP, hareketAzalt, git } from '../lib/anim';
+import Izgara from './Izgara';
 
 const saatMetni = () => new Date().toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
 
@@ -39,7 +40,7 @@ const Contact = () => {
         if (hareketAzalt()) return;
         gsap.from('.iletisim-dev .harf', {
             yPercent: 105,
-            duration: 1.3,
+            duration: 1.2, // başlık açılışları sitede aynı ritimde
             stagger: 0.04,
             ease: 'power4.out',
             scrollTrigger: { trigger: '.iletisim-dev', start: 'top 85%' },
@@ -110,17 +111,22 @@ const Contact = () => {
 
     return (
         <footer className="iletisim" id="iletisim" ref={kok} data-renk="gece" aria-labelledby="iletisim-baslik">
+            <Izgara />
             <h2 id="iletisim-baslik" className="iletisim-dev" aria-label="Bana ulaşabilirsin">
                 <span className="iletisim-dev-ic" aria-hidden="true">
                     {'BANA ULAŞABİLİRSİN'.split('').map((h, i) => (
-                        <span className="harf-kap" key={i}><span className="harf">{h === ' ' ? ' ' : h}</span></span>
+                        <span className="harf-kap" key={i}>
+                            {h === 'İ'
+                                ? <span className="harf harf--i">I</span>
+                                : <span className="harf">{h === ' ' ? ' ' : h}</span>}
+                        </span>
                     ))}
                 </span>
             </h2>
 
             <div className="iletisim-izgara">
                 <div className="iletisim-sol">
-                    <p className="durum"><span className="durum-nokta" aria-hidden="true" />Staj ve proje tekliflerine açığım</p>
+                    <p className="durum"><span className="durum-nokta" aria-hidden="true" />İş, staj ve proje tekliflerine açığım</p>
                     <p className="iletisim-giris">
                         Tehdit istihbaratı, güvenlik ya da yazılım odaklı bir iş için; ya da sadece tanışmak için yaz.
                         Genelde bir gün içinde dönerim.

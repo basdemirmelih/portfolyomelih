@@ -1,3 +1,5 @@
-# https://www.robotstxt.org/robotstxt.html
+# Arama motorları sitenin tamamını tarayabilir.
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://melihbasdemir.vercel.app/sitemap.xml

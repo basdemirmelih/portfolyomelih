@@ -19,6 +19,13 @@
 
     --kenar: clamp(1.1rem, 3.4vw, 3rem);
     --yavas: cubic-bezier(.65, 0, .35, 1);
+    /* Hareket dili: üç süre, iki eğri. Renk/opaklık hızlı; küçük hareketler orta; durum geçişleri uzun. */
+    --hizli: .3s;
+    --orta: .5s;
+    --uzun: .75s;
+    --cikis: cubic-bezier(.2, .8, .2, 1);
+    /* Bölümlerin üst-alt boşluğu (masaüstü); telefonda ayrıca küçülür */
+    --bolum: clamp(6rem, 11vw, 9rem);
     --cizgi: color-mix(in srgb, var(--yazi) 13%, transparent);
 }
 
@@ -104,12 +111,12 @@ p, h1, h2, h3, dl, dd { margin: 0; }
 }
 .kare-link span {
     width: 7px; height: 7px; background: currentColor;
-    transition: transform .6s var(--yavas);
+    transition: transform var(--orta) var(--yavas);
 }
 .kare-link:hover span { transform: translateX(6px) rotate(45deg); }
 .kare-link--dugme { background: none; border: 0; padding: 0; cursor: pointer; align-self: flex-start; }
 
-.harf-kap { display: inline-block; overflow: hidden; vertical-align: top; padding: .12em 0 .04em; margin: -.12em 0 -.04em; }
+.harf-kap { display: inline-block; overflow: hidden; vertical-align: top; padding: .22em 0 .04em; margin: -.22em 0 -.04em; }
 .harf { display: inline-block; }
 
 /* Büyük başlık yazısına hafif dikey ton: düz beyaz yerine kemikten küle */
@@ -171,7 +178,7 @@ p, h1, h2, h3, dl, dd { margin: 0; }
     padding: .55rem 1.2rem;
     border-radius: 999px;
     border: 1px solid transparent;
-    transition: background-color .6s ease, border-color .6s ease, box-shadow .6s ease, padding .6s var(--yavas);
+    transition: background-color var(--orta) ease, border-color var(--orta) ease, box-shadow var(--orta) ease, padding var(--orta) var(--yavas);
 }
 .ust--yuzer .ust-menu ul {
     background: color-mix(in srgb, var(--zemin) 90%, transparent);
@@ -185,18 +192,18 @@ p, h1, h2, h3, dl, dd { margin: 0; }
     font-size: .7rem; text-transform: uppercase; letter-spacing: .02em;
     text-decoration: none;
     opacity: .72;
-    transition: opacity .3s ease;
+    transition: opacity var(--hizli) ease;
 }
 .ust-menu a:hover, .ust-menu a[aria-current] { opacity: 1; }
 .ust-menu a::after {
     content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px;
     background: currentColor; transform: scaleX(0); transform-origin: left;
-    transition: transform .5s var(--yavas);
+    transition: transform var(--orta) var(--yavas);
 }
 .ust-menu a[aria-current]::after { transform: scaleX(1); }
 
 .ust-sag { justify-self: end; display: flex; align-items: center; gap: .9rem; }
-.ust-sosyal { display: grid; place-items: center; opacity: .7; transition: opacity .3s; }
+.ust-sosyal { display: grid; place-items: center; opacity: .7; transition: opacity var(--hizli); }
 .ust-sosyal:hover { opacity: 1; }
 
 .ust-menu-dugme {
@@ -207,7 +214,7 @@ p, h1, h2, h3, dl, dd { margin: 0; }
     color: inherit; cursor: pointer; place-items: center;
 }
 .ust-cizgiler { display: grid; gap: 5px; }
-.ust-cizgiler i { display: block; width: 16px; height: 1.5px; background: currentColor; transition: transform .4s var(--yavas); }
+.ust-cizgiler i { display: block; width: 16px; height: 1.5px; background: currentColor; transition: transform var(--orta) var(--yavas); }
 .ust--acik .ust-cizgiler i:first-child { transform: translateY(3.25px) rotate(45deg); }
 .ust--acik .ust-cizgiler i:last-child { transform: translateY(-3.25px) rotate(-45deg); }
 
@@ -221,7 +228,7 @@ p, h1, h2, h3, dl, dd { margin: 0; }
         display: flex; align-items: flex-end;
         padding: 6rem var(--kenar) 3rem;
         clip-path: circle(0% at calc(100% - 2.4rem) 2.4rem);
-        transition: clip-path .5s var(--yavas);
+        transition: clip-path var(--orta) var(--yavas);
         visibility: hidden;
     }
     .ust--acik .ust-menu { clip-path: circle(150% at calc(100% - 2.4rem) 2.4rem); visibility: visible; }
@@ -256,10 +263,36 @@ p, h1, h2, h3, dl, dd { margin: 0; }
     line-height: .84; letter-spacing: -0.02em;
     margin: 0;
 }
-.isim-satir { position: relative; display: block; overflow: hidden; padding: .13em 0 .03em; margin: -.13em 0 -.03em; }
+.isim-satir { position: relative; display: block; overflow: hidden; padding: .22em 0 .03em; margin: -.22em 0 -.03em; }
 .isim-satir--ust { z-index: 1; }
 .isim-satir--alt { z-index: 3; }
+/* Hayalet satır: BAŞDEMİR görselin önünde çok soluk bir kez daha yazılır. Görselin arkasında kalan
+   harfler (D, E) belli belirsiz seçilir; derinlik bozulmaz. Yalnızca görselin olduğu orta bölgede görünür. */
+.isim-satir--hayalet {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 3;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse 34% 120% at 50% 50%, #000 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 34% 120% at 50% 50%, #000 40%, transparent 100%);
+}
+.isim .isim-satir--hayalet .harf-h {
+    display: inline-block;
+    color: color-mix(in srgb, var(--yazi) 8%, transparent);
+}
 .isim-ic { display: inline-block; white-space: nowrap; }
+/* Degrade yazı yalnızca harfin kutusunu boyar; sıkı satır aralığında İ'nin noktası kutunun dışında
+   kalıp görünmüyordu. Kutu yukarı doğru uzatılır (yerleşim değişmez). */
+.isim .harf, .isim .harf-h, .iletisim-dev .harf { padding-top: .24em; margin-top: -.24em; }
+/* İ noktası: I'nın gövdesiyle aynı genişlikte (.202em), ince (.075em) yatay bir çubuk; büyük harfin
+   üstünden .065em boşlukla, gövdenin tam ortasında (.181em). Ölçüler Archivo 800 / wdth 125'ten alındı.
+   --nokta-ust: kutunun üstünden noktaya mesafe (satır aralığına göre). isimOrnekle.js aynı ölçüleri kullanır. */
+.harf--i { position: relative; --nokta-ust: .161em; }
+.iletisim-dev .harf--i { --nokta-ust: .171em; }
+.harf--i::after {
+    content: ""; position: absolute; left: .181em; top: var(--nokta-ust);
+    width: .202em; height: .075em; transform: translateX(-50%);
+    background: var(--nokta-renk, var(--yazi));
+}
+.harf-h.harf--i { --nokta-renk: currentColor; }
 .isim .harf {
     background: linear-gradient(180deg, var(--yazi) 40%, color-mix(in srgb, var(--yazi) 58%, var(--zemin)));
     -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -318,7 +351,7 @@ p, h1, h2, h3, dl, dd { margin: 0; }
     .giris-gorsel { bottom: 24%; width: min(52vw, 640px); }
 }
 @media (max-width: 860px) {
-    .giris-gorsel { top: 0; bottom: 30%; width: 100%; }
+    .giris-gorsel { top: 3.6rem; bottom: 31%; width: 100%; } /* saç menünün altında kalmaz */
     .giris-dip p:first-child { display: none; }
 }
 
@@ -351,7 +384,7 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     grid-area: 1 / 1;
     opacity: 0;
     transform: translateY(22px);
-    transition: opacity .5s ease, transform .7s var(--yavas);
+    transition: opacity var(--orta) ease, transform var(--uzun) var(--yavas);
     pointer-events: none;
 }
 .sahne-alan--aktif { opacity: 1; transform: none; pointer-events: auto; transition-delay: .1s; }
@@ -403,7 +436,7 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 .serit--cizgili i { -webkit-text-stroke: 0; }
 
 /* ---------- Hakkımda ---------- */
-.hakkimda { padding: clamp(6rem, 11vw, 9rem) var(--kenar); }
+.hakkimda { padding: var(--bolum) var(--kenar); }
 .hakkimda-buyuk {
     margin-top: 1.8rem;
     font-family: var(--f-genis); font-weight: 500; font-stretch: 112%;
@@ -432,7 +465,7 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 }
 
 /* ---------- Çalışmalar: asılı erişim kartları ---------- */
-.calismalar { padding: clamp(6rem, 11vw, 9rem) var(--kenar) clamp(5rem, 9vw, 7rem); overflow: hidden; }
+.calismalar { padding: var(--bolum) var(--kenar) clamp(5rem, 9vw, 7rem); overflow: hidden; }
 .calismalar-ust {
     display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
     align-items: end; gap: 2rem 4rem;
@@ -452,7 +485,7 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 
 .aski {
     --ip: clamp(44px, 7vh, 74px);
-    --rozet-g: clamp(168px, 14vw, 206px);
+    --rozet-g: clamp(176px, 16vw, 240px);
     position: relative;
     width: var(--rozet-g);
     padding-top: var(--ip);
@@ -473,12 +506,15 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 }
 
 .rozet {
+    /* Kartın içi kart boyuyla birlikte ölçeklenir (202px genişlikte 16px). Telefonda sabit 16px (aşağıda). */
+    --rf: clamp(16px, calc(var(--rozet-g) * .0792), 19px);
+    font-size: var(--rf);
     --rx: 0deg; --ry: 0deg; --hx: 50%;
     position: relative; display: block;
     width: 100%; aspect-ratio: .8;
     cursor: pointer; outline: none;
     transform: perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry));
-    transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+    transition: transform var(--orta) var(--cikis);
 }
 .rozet--egik { transition: transform .12s linear; }
 .rozet:focus-visible .rozet-yuz { outline: 1.5px solid var(--vurgu); outline-offset: 4px; }
@@ -486,14 +522,14 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     position: relative; width: 100%; height: 100%;
     transform-style: preserve-3d;
     transform: perspective(1300px) rotateY(0deg);
-    transition: transform .7s cubic-bezier(.7, 0, .2, 1);
+    transition: transform var(--uzun) var(--yavas);
 }
 .rozet--cevrik .rozet-ic { transform: perspective(1300px) rotateY(180deg); }
 
 .rozet-yuz {
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
-    padding: .85rem .95rem .75rem;
+    padding: .85em .95em .75em;
     border-radius: 14px; overflow: hidden;
     backface-visibility: hidden; -webkit-backface-visibility: hidden;
     text-align: left;
@@ -517,35 +553,35 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 
 .rozet-yuva {
     align-self: center;
-    width: 30%; height: 7px; border-radius: 999px; margin-bottom: .7rem;
+    width: 30%; height: 7px; border-radius: 999px; margin-bottom: .7em;
     background: rgba(0, 0, 0, .6);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, .7), 0 1px 0 rgba(255, 255, 255, .18);
 }
 .rozet-ust {
-    display: flex; justify-content: space-between; gap: .5rem;
-    font: 500 .6rem var(--f-mono); letter-spacing: .06em; text-transform: uppercase;
+    display: flex; justify-content: space-between; gap: .5em;
+    font: 500 .6em var(--f-mono); letter-spacing: .06em; text-transform: uppercase;
 }
 .rozet-ust span { opacity: .72; }
 .rozet-ust b { font-weight: 600; color: var(--kod-renk); }
 
 .rozet-buyuk {
     margin-top: auto;
-    display: flex; align-items: baseline; gap: .35rem;
+    display: flex; align-items: baseline; gap: .35em;
     font-family: var(--f-genis); font-weight: 800; font-stretch: 125%;
-    font-size: clamp(1.9rem, 3vw, 2.6rem); line-height: .9;
+    font-size: min(2.6em, calc(var(--rozet-g) * .2)); line-height: .9;
     text-transform: uppercase; letter-spacing: -0.02em;
 }
-.rozet-buyuk small { font: 500 .6rem var(--f-mono); letter-spacing: .04em; opacity: .72; text-transform: none; }
+.rozet-buyuk small { white-space: nowrap; font: 500 calc(var(--rf) * .6) var(--f-mono); letter-spacing: .04em; opacity: .72; text-transform: none; }
 .rozet-baslik {
-    margin-top: .75rem;
+    margin-top: .75em;
     font-family: var(--f-genis); font-weight: 700; font-stretch: 112%;
-    font-size: .92rem; line-height: 1.15;
+    font-size: .92em; line-height: 1.15;
 }
-.rozet-rol { margin-top: .2rem; font-size: .74rem; line-height: 1.35; opacity: .78; }
+.rozet-rol { margin-top: .2em; font-size: .74em; line-height: 1.35; opacity: .78; }
 
 /* Hologram şeridi: ışığı imlecin açısına göre yansıtır */
 .rozet-holo {
-    display: block; height: 6px; margin: .65rem -.95rem 0;
+    display: block; height: 6px; margin: .65em -.95em 0;
     background: linear-gradient(100deg,
         hsl(200 38% 76%), hsl(255 30% 80%), hsl(320 26% 82%), hsl(42 40% 80%), hsl(160 30% 76%), hsl(200 38% 76%), hsl(255 30% 80%));
     background-size: 320% 100%;
@@ -556,30 +592,30 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 .rozet--basari .rozet-holo { opacity: .55; }
 
 .rozet-dip {
-    display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; margin-top: .6rem;
-    font: 500 .58rem var(--f-mono); letter-spacing: .04em;
+    display: flex; align-items: baseline; justify-content: space-between; gap: .6em; margin-top: .6em;
+    font: 500 .58em var(--f-mono); letter-spacing: .04em;
 }
 .rozet-dip > * { white-space: nowrap; }
 .rozet-dip em { font-style: normal; opacity: .72; text-align: right; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 .rozet-arka-baslik {
-    margin-top: .7rem;
+    margin-top: .7em;
     font-family: var(--f-genis); font-weight: 700; font-stretch: 112%;
-    font-size: .9rem; line-height: 1.15;
+    font-size: .9em; line-height: 1.15;
 }
 .rozet-metin {
-    margin-top: .45rem; font-size: .68rem; line-height: 1.42; opacity: .85;
-    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+    margin-top: .45em; font-size: .68em; line-height: 1.42; opacity: .85;
+    display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden;
     flex: 0 1 auto; min-height: 0;
 }
 /* Etiketler ve bağlantı her kartta aynı yerde: alt kenara yaslı */
-.rozet-arka-dip { margin-top: auto; padding-top: .5rem; display: flex; flex-direction: column; gap: .5rem; flex-shrink: 0; }
-.rozet-etiketler { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25rem; }
-.rozet-etiketler li { font: 400 .58rem var(--f-mono); padding: .12rem .42rem; border: 1px solid currentColor; border-radius: 999px; opacity: .8; white-space: nowrap; }
+.rozet-arka-dip { margin-top: auto; padding-top: .5em; display: flex; flex-direction: column; gap: .5em; flex-shrink: 0; }
+.rozet-etiketler { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25em; }
+.rozet-etiketler li { font: 400 .58em var(--f-mono); padding: .12em .42em; border: 1px solid currentColor; border-radius: 999px; opacity: .8; white-space: nowrap; }
 .rozet-link {
     align-self: flex-start;
     font-family: var(--f-genis); font-weight: 700; font-stretch: 125%;
-    font-size: .62rem; text-transform: uppercase; letter-spacing: .02em;
+    font-size: .62em; text-transform: uppercase; letter-spacing: .02em;
     text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px;
 }
 
@@ -596,7 +632,7 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 }
 
 /* ---------- İletişim ---------- */
-.iletisim { position: relative; z-index: 2; padding: clamp(6rem, 10vw, 8rem) var(--kenar) 1.5rem; }
+.iletisim { position: relative; z-index: 2; padding: var(--bolum) var(--kenar) 1.5rem; }
 .iletisim-dev {
     --dev-boyut: 14vw;
     font-family: var(--f-genis); font-weight: 800; font-stretch: 125%;
@@ -623,14 +659,14 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     font-size: clamp(1.05rem, 1.55vw, 1.4rem);
     text-decoration: none; overflow-wrap: anywhere;
     border-bottom: 1px solid color-mix(in srgb, var(--yazi) 32%, transparent);
-    transition: border-color .3s;
+    transition: border-color var(--hizli);
 }
 .eposta:hover { border-color: var(--yazi); }
 .kopyala {
     font: 400 .7rem var(--f-mono); color: inherit;
     padding: .35rem .75rem; border-radius: 999px;
     background: none; border: 1px solid color-mix(in srgb, var(--yazi) 25%, transparent);
-    cursor: pointer; transition: background-color .3s, color .3s;
+    cursor: pointer; transition: background-color var(--hizli), color var(--hizli);
 }
 .kopyala:hover { background: var(--yazi); color: var(--zemin); }
 .iletisim-bilgi { margin-top: 1.8rem; display: grid; gap: .45rem; }
@@ -650,12 +686,12 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     content: ''; position: absolute; inset: 0; z-index: -1;
     background: color-mix(in srgb, var(--yazi) 7%, transparent);
     transform: scaleY(0); transform-origin: bottom;
-    transition: transform .5s var(--yavas);
+    transition: transform var(--orta) var(--yavas);
 }
 .kanal:hover::before { transform: scaleY(1); }
 .kanal-tur { font: 400 .74rem var(--f-mono); color: var(--soluk); }
 .kanal-deger { font-weight: 500; overflow-wrap: anywhere; }
-.kanal-ok { color: var(--soluk); transition: transform .5s var(--yavas), color .3s; }
+.kanal-ok { color: var(--soluk); transition: transform var(--orta) var(--yavas), color var(--hizli); }
 .kanal:hover .kanal-ok { transform: rotate(45deg); color: var(--yazi); }
 
 .form { display: flex; flex-direction: column; gap: 1rem; }
@@ -758,7 +794,7 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
    ============================================================ */
 @media (max-width: 860px) {
     /* Kaydırınca üst satır içeriğin üstüne binmesin: arkasına zemin renginde yumuşak bir şerit */
-    .ust { padding-top: .7rem; padding-bottom: .7rem; transition: background-color .4s ease, box-shadow .4s ease; }
+    .ust { padding-top: .7rem; padding-bottom: .7rem; transition: background-color var(--orta) ease, box-shadow var(--orta) ease; }
     .ust--yuzer {
         background: color-mix(in srgb, var(--zemin) 92%, transparent);
         box-shadow: 0 1px 0 var(--cizgi);
@@ -791,14 +827,18 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     .sahne-ust, .sahne-kod { font-size: .8rem; }
 
     /* Kartlar: biraz daha geniş, böylece küçük yazılar okunur boya çıkabilir */
-    .aski { --rozet-g: min(56vw, 220px); --ip: 40px; }
-    .rozet-ust { font-size: .68rem; }
-    .rozet-buyuk small { font-size: .68rem; }
-    .rozet-baslik, .rozet-arka-baslik { font-size: .92rem; }
-    .rozet-rol { font-size: .76rem; }
-    .rozet-dip { font-size: .66rem; }
-    .rozet-metin { font-size: .74rem; line-height: 1.42; -webkit-line-clamp: 5; }
-    .rozet-etiketler li { font-size: .66rem; padding: .14rem .45rem; }
+    .aski { --rozet-g: min(49vw, 196px); --ip: 36px; }
+    .rozet { --rf: 16px; font-size: 16px; }
+    .rozet-ust { font-size: .64rem; }
+    .rozet-buyuk small { font-size: .64rem; }
+    .rozet-buyuk { font-size: 1.7rem; }
+    .rozet-yuz { padding: .75rem .8rem .65rem; }
+    .rozet-holo { margin-left: -.8rem; margin-right: -.8rem; }
+    .rozet-baslik, .rozet-arka-baslik { font-size: .86rem; }
+    .rozet-rol { font-size: .72rem; }
+    .rozet-dip { font-size: .62rem; }
+    .rozet-metin { font-size: .7rem; line-height: 1.4; -webkit-line-clamp: 6; }
+    .rozet-etiketler li { font-size: .62rem; padding: .12rem .4rem; }
 }
 
 /* Yatay telefon (kısa ve geniş ekran): masaüstü yerleşimine yakın.
@@ -821,4 +861,100 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     .sahne-alan p { margin-top: .6rem; font-size: .88rem; line-height: 1.45; }
     .sahne-alan ul { margin-top: .7rem; }
     .sahne-sayac, .sahne-ilerleme { display: none; }
+}
+
+/* Telefon (dikey): yetenekler bölümü sabit ve dengeli.
+   Her başlık iki satır olur; böylece başlık değişirken metin ve etiketler yerinden oynamaz.
+   Yazı bloğu derli toplu tutulur ki simgeye üstte yeterli yer kalsın. */
+@media (max-width: 899px) and (orientation: portrait) {
+    /* Yazı bloğu alta yaslı değil, simgenin hemen altından başlar (aradaki boşluk ekran boyundan bağımsız).
+       Simgenin merkezi: ekranın ortasından min(%30, 150px) yukarıda (motor.js); yarı yüksekliği ~%28 ekran genişliği. */
+    .sahne-ic { align-items: flex-start; padding-bottom: 1.6rem; padding-top: calc(50svh - min(30svh, 150px) + 28vw + 1.1rem); }
+    .sahne-ust { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .sahne-sayac { display: none; }
+    .sahne-alanlar { margin-top: 0; }
+    .sahne-alan h3 { width: min-content; font-size: clamp(1.75rem, 8.4vw, 2.2rem); }
+    .sahne-kod { margin-bottom: .45rem; }
+    .sahne-alan p { margin-top: .8rem; font-size: .94rem; line-height: 1.5; }
+    .sahne-alan ul { margin-top: .9rem; }
+    .sahne-ilerleme { margin-top: 1.4rem; }
+    /* Geçişte metin daha az kayar */
+    .sahne-alan { transform: translateY(10px); }
+    .sahne-alan--aktif { transform: none; }
+
+    /* Telefonu yoran tam ekran süs katmanları kapalı (görsel fark çok küçük) */
+    .doku, .atmosfer { display: none; }
+}
+
+/* Telefon: genel sıkılaştırma. Masaüstü için ayarlı geniş bölüm boşlukları telefonda gereksiz kaydırma
+   yaratıyordu. Yalnızca boşluklar ve birkaç yazı boyu küçülür; dokunma alanları 44px'in altına inmez. */
+@media (max-width: 860px) {
+    .seritler { padding: 2.25rem 0; }
+
+    .hakkimda { padding: 4rem var(--kenar); }
+    .hakkimda-buyuk { margin-top: 1.2rem; font-size: 1.62rem; line-height: 1.14; }
+    .hakkimda-izgara { margin-top: 2rem; gap: 1.75rem; }
+    .hakkimda-metin p { font-size: .98rem; line-height: 1.6; }
+    .hakkimda-metin p + p { margin-top: .85rem; }
+    .kunye > div { padding: .6rem 0; }
+
+    .calismalar { padding: 4rem var(--kenar) 3rem; }
+    .calismalar-ust { gap: 1rem; }
+    .askilar { margin-top: 1.75rem; gap: 1.5rem; }
+    .askilar-sira > ul { padding-bottom: 1.75rem; }
+
+    .iletisim { padding-top: 4rem; }
+    .iletisim-izgara { margin-top: 1.75rem; padding-top: 1.6rem; gap: 2rem; }
+    .iletisim-giris { margin-top: .9rem; }
+    .eposta-kutu { margin-top: 1.2rem; }
+    .iletisim-bilgi { margin-top: 1.2rem; }
+    .kanal { min-height: 48px; padding: .55rem .2rem; }
+    .kanallar li:first-child .kanal { padding-top: .55rem; }
+    .form { gap: .8rem; }
+    .alt-satir { margin-top: 2.5rem; padding-top: .8rem; }
+}
+
+/* İletişim: Mees tarzı mozaik zemin (Izgara.js). Her kare tuvalde tek piksel, burada büyütülür.
+   Mees'teki gibi çok düşük opaklık: kareler zeminden ancak seçilir, sürekli titreşir. Üst kenarda bir
+   önceki bölüme yumuşak geçiş. */
+.izgara {
+    position: absolute; top: 0; left: 0; width: 100%; z-index: 0;
+    pointer-events: none;
+    image-rendering: pixelated;
+    opacity: .08; /* kareler tuvalde yarı güçte: sıradan kareler ~%4, farenin karesi %8 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 12%);
+}
+.iletisim { overflow: hidden; } /* mozaik tuvali son satırda bölümden taşmasın */
+.iletisim > :not(.izgara), .calismalar > :not(.izgara) { position: relative; z-index: 1; }
+/* Çalışmalar'dan İletişim'e mozaik kesintisiz akar: İletişim'in üst kenarında solma yok */
+.iletisim .izgara { -webkit-mask-image: none; mask-image: none; }
+
+
+/* Telefon: ikinci, dengeli sıkılaştırma. Dizilim aynı; masaüstü ölçüsünde kalan gövde yazıları (17px)
+   telefon için standart boya (15-16px), büyük başlıklar ve bölüm boşlukları bir kademe küçülür.
+   Hiçbir yazı 15px'in, hiçbir dokunma alanı 44px'in altına inmez. */
+@media (max-width: 860px) {
+    .seritler { padding: 1.75rem 0; }
+    .serit { font-size: 2rem; }
+
+    .hakkimda { padding: 3.5rem var(--kenar); }
+    .hakkimda-buyuk { margin-top: 1rem; font-size: 1.45rem; }
+    .hakkimda-izgara { margin-top: 1.6rem; gap: 1.4rem; }
+    .hakkimda-metin p { font-size: .95rem; line-height: 1.58; }
+    .kunye > div { padding: .5rem 0; }
+    .kunye dd { font-size: .95rem; line-height: 1.5; }
+
+    .genis-baslik { font-size: 2.15rem; }
+    .calismalar { padding: 3.5rem var(--kenar) 2.5rem; }
+    .calismalar-giris { font-size: .95rem; line-height: 1.55; }
+    .askilar { margin-top: 1.5rem; gap: 1.25rem; }
+    .aski { --ip: 30px; }
+    .askilar-sira > ul { padding-bottom: 1.4rem; }
+
+    .iletisim { padding-top: 3.5rem; }
+    .iletisim-izgara { margin-top: 1.4rem; padding-top: 1.3rem; gap: 1.6rem; }
+    .iletisim-giris { font-size: .95rem; line-height: 1.55; }
+    .kanal-deger { font-size: 1rem; }
+    .alt-satir { margin-top: 2rem; }
 }
