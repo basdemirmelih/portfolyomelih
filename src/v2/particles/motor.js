@@ -115,6 +115,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     let W = 1;
     let H = 1;
     let sekilKaydir = new THREE.Vector3();
+    let kaymaPx = 0; // telefonda görüntü kamerayla yukarı kaydırılır (şekil eğilmeden)
+    let dar = false;
     let isimGecersiz = true;
 
     const boyutla = () => {
@@ -124,15 +126,20 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         kamera.aspect = W / H;
         const yarimTan = Math.tan(THREE.MathUtils.degToRad(kamera.fov / 2));
         // Dar ve dikey ekran: şekil üstte. Yatay telefon masaüstü gibi davranır (yazı solda, şekil sağda).
-        const dar = W < 900 && H > W * 0.75;
-        const z = Math.max(10, (dar ? 2.0 : 2.6) / (yarimTan * kamera.aspect));
+        dar = W < 900 && H > W * 0.75;
+        // Telefonda şekiller biraz daha uzakta: ekranın kenarlarına taşmaz.
+        const z = Math.max(10, (dar ? 2.7 : 2.6) / (yarimTan * kamera.aspect));
         kamera.position.set(0, 0, z);
         kamera.lookAt(0, 0, 0);
+        // Telefonda şekil üst yarıda durur. Şekli yukarı taşımak onu alttan görünür ve eğik yapıyordu;
+        // bunun yerine kameranın görüntüsü kaydırılır, şekil tam karşıdan görünür.
+        kaymaPx = dar ? H * 0.25 : 0;
+        if (kaymaPx) kamera.setViewOffset(W, H, 0, kaymaPx, W, H); else kamera.clearViewOffset();
         kamera.updateProjectionMatrix();
         gorunur.h = 2 * z * yarimTan;
         gorunur.w = gorunur.h * kamera.aspect;
         // Masaüstünde şekil sağa yaslanır (solda yazılar var), telefonda üst yarıya çıkar.
-        sekilKaydir = dar ? new THREE.Vector3(0, gorunur.h * 0.25, 0) : new THREE.Vector3(gorunur.w * (kamera.aspect > 1.9 ? 0.24 : 0.16), -0.1, 0); // çok geniş ekranda (yatay telefon) daha sağa
+        sekilKaydir = dar ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(gorunur.w * (kamera.aspect > 1.9 ? 0.24 : 0.16), -0.1, 0); // çok geniş ekranda (yatay telefon) daha sağa
         u.uFogNear.value = z - 1.6;
         u.uFogFar.value = z + 9;
         const pikselBirim = (H * dpr) / (2 * yarimTan);
@@ -147,7 +154,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     const fare = { x: 999, y: 999, icinde: 0 };
     const fareHareket = (e) => {
         fare.x = (e.clientX / W - 0.5) * gorunur.w;
-        fare.y = -(e.clientY / H - 0.5) * gorunur.h;
+        fare.y = -((e.clientY + kaymaPx) / H - 0.5) * gorunur.h;
         fare.icinde = 1;
     };
     const fareCik = () => { fare.icinde = 0; };
@@ -204,7 +211,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
             if (!hazir) {
                 opaklik = 0;
             } else {
-                u.uFromOff.value.set(0, k.scrollY * wpp, 0);
+                // Ad ekrandaki yerinde kalsın: telefondaki görüntü kaydırması geri alınır.
+                u.uFromOff.value.set(0, (k.scrollY - kaymaPx) * wpp, 0);
                 u.uFromRot.value = 0;
                 ilerleme = egri(sinirla((k.giris - 0.06) / 0.86));
                 opaklik = sinirla((k.giris - 0.004) / 0.03);
@@ -229,7 +237,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         u.uProgress.value = ilerleme;
         u.uOpaklik.value = 1;
         u.uTime.value = t;
-        u.uDonus.value = hareketAzalt ? 0 : Math.sin(t * 0.32) * 0.42;
+        // Telefonda salınım daha az: dar ekranda büyük açılar şekli yamultuyordu.
+        u.uDonus.value = hareketAzalt ? 0 : Math.sin(t * 0.32) * (dar ? 0.2 : 0.42);
         const hedefItme = hareketAzalt ? 0 : fare.icinde;
         u.uPush.value += (hedefItme - u.uPush.value) * 0.08;
         u.uMouse.value.set(fare.x, fare.y);

@@ -791,14 +791,14 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     .sahne-ust, .sahne-kod { font-size: .8rem; }
 
     /* Kartlar: biraz daha geniş, böylece küçük yazılar okunur boya çıkabilir */
-    .aski { --rozet-g: min(66vw, 260px); }
-    .rozet-ust { font-size: .72rem; }
-    .rozet-buyuk small { font-size: .72rem; }
-    .rozet-baslik, .rozet-arka-baslik { font-size: 1rem; }
-    .rozet-rol { font-size: .82rem; }
-    .rozet-dip { font-size: .7rem; }
-    .rozet-metin { font-size: .8rem; line-height: 1.45; }
-    .rozet-etiketler li { font-size: .7rem; padding: .16rem .5rem; }
+    .aski { --rozet-g: min(56vw, 220px); --ip: 40px; }
+    .rozet-ust { font-size: .68rem; }
+    .rozet-buyuk small { font-size: .68rem; }
+    .rozet-baslik, .rozet-arka-baslik { font-size: .92rem; }
+    .rozet-rol { font-size: .76rem; }
+    .rozet-dip { font-size: .66rem; }
+    .rozet-metin { font-size: .74rem; line-height: 1.42; -webkit-line-clamp: 5; }
+    .rozet-etiketler li { font-size: .66rem; padding: .14rem .45rem; }
 }
 
 /* Yatay telefon (kısa ve geniş ekran): masaüstü yerleşimine yakın.
