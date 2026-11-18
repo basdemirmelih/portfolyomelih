@@ -1,8 +1,8 @@
-// src/index.js (veya main.jsx)
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css'; // Global stiller
-import App from './App'; // Ana uygulama bileşeni
+// Yeni tasarım (v2). Önceki sinematik koyu tasarım src/App.js ve src/index.css içinde duruyor.
+import './v2/v2.css';
+import App from './v2/App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

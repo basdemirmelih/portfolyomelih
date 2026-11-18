@@ -1,108 +1,76 @@
-import React, { useState } from 'react';
-import '../styles/Contact.css'; // Contact bölümüne özel stiller
+import React, { useRef, useState } from 'react';
+import { kisi, baglantilar } from '../data';
+import { gsap, useGSAP, hareketAzalt, git } from '../lib/anim';
 
 const Contact = () => {
-    const [formData, setFormData] = useState({
-        adsoyad: '',
-        email: '',
-        icerik: '',
-    });
+    const kok = useRef(null);
+    const [ad, setAd] = useState('');
+    const [mesaj, setMesaj] = useState('');
 
-    const contactInfo = [
-        { icon: 'fas fa-envelope', title: 'E-posta', text: 'basdemirmelih58@gmail.com', href: 'mailto:basdemirmelih58@gmail.com' },
-        { icon: 'fas fa-phone-alt', title: 'Telefon', text: '+90 533 649 10 58', href: 'tel:+905336491058' },
-        { icon: 'fas fa-map-marker-alt', title: 'Konum', text: 'Sivas/Merkez & Balıkesir/Bigadiç, Türkiye' },
-        { icon: 'fab fa-linkedin', title: 'LinkedIn', text: 'Melih Başdemir', href: 'https://www.linkedin.com/in/melih-ba%C5%9Fdemir-215057285/', target: '_blank' },
-        { icon: 'fab fa-instagram', title: 'Instagram', text: 'melihbasdemir', href: 'https://www.instagram.com/melihbasdemir/', target: '_blank' },
-        { icon: 'fab fa-github', title: 'GitHub', text: 'basdemirmelih', href: 'https://github.com/basdemirmelih', target: '_blank' },
-    ];
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Burada form verilerini gönderme işlemini yapabilirsiniz.
-        // Örneğin: bir API'ye gönderme, EmailJS kullanma vb.
-        console.log('Form Verileri:', formData);
-        alert('Mesajınız konsola yazdırıldı! (Gerçek gönderim entegre edilmedi)');
-        // Formu sıfırla (isteğe bağlı)
-        setFormData({
-            adsoyad: '',
-            email: '',
-            icerik: '',
+    useGSAP(() => {
+        if (hareketAzalt()) return;
+        gsap.from('.iletisim-baslik .isim-satir > span', {
+            yPercent: 115,
+            duration: 1.3,
+            stagger: 0.1,
+            ease: 'power4.out',
+            scrollTrigger: { trigger: '.iletisim-baslik', start: 'top 85%' },
         });
+    }, { scope: kok });
+
+    // Sunucu gerektirmeden: mesajı ziyaretçinin kendi e-posta uygulamasında hazır açar.
+    const gonder = (e) => {
+        e.preventDefault();
+        const konu = encodeURIComponent(`Portfolyo üzerinden mesaj: ${ad}`);
+        const govde = encodeURIComponent(`${mesaj}\n\n${ad}`);
+        window.location.href = `mailto:${kisi.eposta}?subject=${konu}&body=${govde}`;
     };
+
+    const [kullanici, alan] = kisi.eposta.split('@');
 
     return (
-        <section id="iletisim" className="bolum">
-            <div className="container">
-                <h2 className="bolum-baslik">İletişim</h2>
-                <div className="iletisim-giris">
-                    <p>Benimle iletişime geçmek, projeleriniz hakkında konuşmak veya sadece bir merhaba demek için aşağıdaki bilgileri ya da iletişim formunu kullanabilirsiniz.</p>
-                </div>
+        <footer className="iletisim" id="iletisim" ref={kok} aria-labelledby="iletisim-baslik">
+            <div className="kap">
+                <h2 className="iletisim-baslik" id="iletisim-baslik">
+                    <span className="isim-satir"><span>Bir merhaba</span></span>
+                    <span className="isim-satir"><span>yeter.</span></span>
+                </h2>
 
-                <div className="iletisim-kartlari">
-                    {contactInfo.map((item, index) => (
-                        <div className="iletisim-item" key={index}>
-                            <i className={item.icon}></i>
-                            <h4>{item.title}</h4>
-                            {item.href ? (
-                                <p><a href={item.href} target={item.target || '_self'} rel={item.target === '_blank' ? 'noopener noreferrer' : ''}>{item.text}</a></p>
-                            ) : (
-                                <p>{item.text}</p>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                <div className="iletisim-izgara">
+                    <div>
+                        <p className="iletisim-giris">Staj, ortak bir proje ya da sadece tanışmak için yazabilirsin.</p>
+                        <a className="eposta" href={`mailto:${kisi.eposta}`}>{kullanici}<wbr />@{alan}</a>
+                        <ul className="baglantilar">
+                            <li><a href={kisi.telefonHref}>{kisi.telefon}</a></li>
+                            {baglantilar.map((b) => (
+                                <li key={b.ad}>
+                                    <a href={b.href} target="_blank" rel="noopener noreferrer">{b.ad}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-                <div className="iletisim-formu">
-                    <h3>Bana Mesaj Gönderin</h3>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-grup">
-                            <label htmlFor="adsoyad">Ad Soyad</label>
-                            <input
-                                type="text"
-                                id="adsoyad"
-                                name="adsoyad"
-                                value={formData.adsoyad}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-grup">
-                            <label htmlFor="email">E-posta Adresiniz</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-grup">
-                            <label htmlFor="icerik">Mesajınız</label>
-                            <textarea
-                                id="icerik"
-                                name="icerik"
-                                value={formData.icerik}
-                                onChange={handleChange}
-                                required
-                            ></textarea>
-                        </div>
-                        <div className="form-grup">
-                            <button type="submit" className="btn">Gönder</button>
-                        </div>
+                    <form className="form" onSubmit={gonder}>
+                        <label>
+                            <span>Adın</span>
+                            <input value={ad} onChange={(e) => setAd(e.target.value)} required autoComplete="name" />
+                        </label>
+                        <label>
+                            <span>Mesajın</span>
+                            <textarea value={mesaj} onChange={(e) => setMesaj(e.target.value)} required rows={4} />
+                        </label>
+                        <button className="dugme" type="submit"><span>E-postayla gönder</span></button>
+                        <p className="form-not">Butona basınca e-posta uygulaman bu mesajla hazır açılır.</p>
                     </form>
                 </div>
+
+                <div className="alt-satir">
+                    <p>© {new Date().getFullYear()} Melih Başdemir</p>
+                    <a href="https://github.com/basdemirmelih/portfolyomelih" target="_blank" rel="noopener noreferrer">Kaynak kodu</a>
+                    <button type="button" onClick={() => git('#basa')}>Başa dön</button>
+                </div>
             </div>
-        </section>
+        </footer>
     );
 };
 

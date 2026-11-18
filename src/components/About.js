@@ -1,109 +1,41 @@
-import React from 'react';
-import '../styles/About.css'; // About bölümüne özel stiller
+import React, { useRef } from 'react';
+import { gsap, useGSAP, hareketAzalt } from '../lib/anim';
 
 const About = () => {
+    const kok = useRef(null);
+
+    useGSAP(() => {
+        if (hareketAzalt()) return;
+        gsap.fromTo('.hakkimda-foto',
+            { clipPath: 'inset(18% 18% 18% 18%)' },
+            { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { trigger: '.hakkimda-foto', start: 'top 90%', end: 'top 30%', scrub: true } });
+        gsap.fromTo('.hakkimda-foto img',
+            { scale: 1.35 },
+            { scale: 1, ease: 'none', scrollTrigger: { trigger: '.hakkimda-foto', start: 'top 90%', end: 'bottom 20%', scrub: true } });
+    }, { scope: kok });
+
     return (
-        <section id="hakkimda" className="bolum">
-            <div className="container">
-                {/* Genel Bölüm Başlığı (Merkezlenmiş) */}
-                {/* Orijinal HTML'de bu başlık yoktu, ancak genellikle bölümlerin bir başlığı olur. */}
-                {/* Eğer orijinal tasarımdaki gibi sadece sağ tarafta "Ben Kimim?" başlığı isteniyorsa, aşağıdaki satırı kaldırın. */}
-                {/* <h2 className="bolum-baslik">Hakkımda</h2> */}
-
-                <div className="hakkimda-ust-kisim">
-                    <div className="hakkimda-sol">
-                        {/* Resim yolunu public klasörüne göre ayarlayın */}
-                        <img src="/images/WhatsApp Görsel 2025-05-16 saat 11.26.28_c64b5e18.jpg" alt="Melih Başdemir" />
-                    </div>
-                    <div className="hakkimda-sag">
-                        <div>
-                            {/* Sağ taraftaki özel başlık */}
-                            <h2 className="hakkimda-bolum-baslik">Ben Kimim?</h2>
-                        </div>
-                        <div className="hakkimda-metin">
-                            <h3>Merhaba, ben Melih Başdemir. Yazılım geliştirme ve siber güvenlik alanlarında kendimi geliştirerek sistemleri geliştirme, savunma ve saldırı perspektifleriyle analiz etmeyi hedefleyen bir Bilgisayar Mühendisi adayıyım.</h3>
-                            <p>
-                                Bilgisayar Mühendisliği 3. sınıf öğrencisiyim. Yazılım ve sistemler üzerine çalışırken güvenlik ve genel mühendislik bakış açısıyla ilerlemeye özen gösteriyorum. Linux ortamları, temel siber güvenlik kavramları ile
-                                savunma ve saldırı perspektiflerini de öğrenerek sistemleri daha kapsamlı analiz etmeye çalışıyorum. Problem çözme, analitik düşünme ve mantıklı yapılar kurma konularına odaklanıyorum. Aynı zamanda sistemlerin nasıl çalıştığını
-                                anlamanın yanında, nasıl daha güvenli ve sağlam hale getirilebileceğini de öğrenmeye çalışıyorum.
-                                Öğrenmeye açık biriyim ve projelere hem teknik hem de analitik açıdan katkı sağlamayı önemsiyorum.
-                            </p>
-                        </div>
-                    </div>
+        <section className="hakkimda" id="hakkimda" ref={kok} aria-labelledby="hakkimda-baslik">
+            <div className="kap hakkimda-ic">
+                <div className="hakkimda-foto">
+                    <img src="/images/melih.jpg" alt="Melih Başdemir" loading="lazy" />
                 </div>
-
-                <div className="bilgiler-alt-satir">
-                    <div className="bilgi-kutusu">
-                        <h4>Kısa Bilgiler</h4>
-                        <ul>
-                            <li><strong>Doğum Tarihi:</strong> 19.05.2004</li>
-                            <li><strong>Doğum Yeri:</strong> Sivas/Merkez</li>
-                            <li>
-                                <strong>E-posta:</strong>
-                                <a href="mailto:basdemirmelih58@gmail.com" style={{ color: 'var(--light-accent)', textDecoration: 'none', marginLeft: '5px' }}>
-                                    basdemirmelih58@gmail.com
-                                </a>
-                            </li>
-                            <li><strong>Konum:</strong> Sivas/Merkez & Balıkesir/Bigadiç, Türkiye</li>
-                            <li><strong>İlgi Alanları:</strong> Yeni teknolojiler, siber güvenlik, linux, sinema, seyahat, futbol, politika...</li>
-                        </ul>
-                        {/* CV bağlantısını güncelleyin */}
-                        <a href="/cv/Melih_Basdemir_CV.pdf" className="btn btn-ghost" download="Melih_Basdemir_CV.pdf">CV'mi İndir</a>
-                    </div>
-
-                    <div className="bilgi-kutusu">
-                        <h4>Eğitim Bilgilerim</h4>
-                        <ul className="egitim-listesi">
-                            <li>
-                                <i className="fas fa-graduation-cap"></i>
-                                <div className="okul-detay">
-                                    <span className="okul-adi">Balıkesir Üniversitesi</span>
-                                    <span className="okul-tarih">2023 - 2027 (?)</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i className="fas fa-graduation-cap"></i>
-                                <div className="okul-detay">
-                                    <span className="okul-adi">Sivas Selçuk Anadolu Lisesi</span>
-                                    <span className="okul-tarih">2018 - 2022</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i className="fas fa-graduation-cap"></i>
-                                <div className="okul-detay">
-                                    <span className="okul-adi">Sivas Kanuni Ortaokulu</span>
-                                    <span className="okul-tarih">2014 - 2018</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i className="fas fa-graduation-cap"></i>
-                                <div className="okul-detay">
-                                    <span className="okul-adi">Sivas Kanuni İlkokulu</span>
-                                    <span className="okul-tarih">2010 - 2014</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div className="bilgi-kutusu">
-                        <h4>Bildiğim Diller</h4>
-                        <ul className="diller-listesi">
-                            <li>
-                                <i className="fas fa-language"></i>
-                                <div className="dil-detay">
-                                    <span className="dil-adi">Türkçe</span>
-                                    <span className="dil-seviye">Ana Dil</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i className="fas fa-language"></i>
-                                <div className="dil-detay">
-                                    <span className="dil-adi">İngilizce</span>
-                                    <span className="dil-seviye">Orta - Üst Seviye</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                <div className="hakkimda-metin">
+                    <h2 id="hakkimda-baslik">Hakkımda</h2>
+                    <p className="hakkimda-giris">
+                        Güvenliği sonradan eklenen bir katman olarak değil, yazılımın baştan parçası olarak görüyorum.
+                    </p>
+                    <p>
+                        Balıkesir Üniversitesi’nde bilgisayar mühendisliği okuyorum. Linux ortamlarında çalışıyor,
+                        savunma ve saldırı tarafını birlikte öğreniyorum. Problem çözmeyi, analitik düşünmeyi ve düzenli
+                        yapılar kurmayı seviyorum. Ekip projelerinde hem teknik hem de analitik tarafta katkı vermek istiyorum.
+                    </p>
+                    <dl className="kunye">
+                        <div><dt>Eğitim</dt><dd>Balıkesir Üniversitesi, Bilgisayar Mühendisliği (2023–2027)</dd></div>
+                        <div><dt>Konum</dt><dd>Sivas ve Balıkesir</dd></div>
+                        <div><dt>Diller</dt><dd>Türkçe (ana dil), İngilizce (orta-üst seviye)</dd></div>
+                        <div><dt>Boş zamanlarımda</dt><dd>Sinema, seyahat, futbol, siyaset</dd></div>
+                    </dl>
                 </div>
             </div>
         </section>

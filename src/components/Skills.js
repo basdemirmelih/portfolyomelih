@@ -1,93 +1,50 @@
-import React from 'react';
-import '../styles/Skills.css'; // CSS dosyanızın yolu
+import React, { useRef } from 'react';
+import { alanlar } from '../data';
+import { gsap, useGSAP, hareketAzalt } from '../lib/anim';
 
-const skillsData = [
-    { id: 'linux', name: 'Linux', iconClass: 'fab fa-linux', itemClassName: 'skill-logo-item' },
-    { id: 'cybersecurity', name: 'Siber Güvenlik', iconClass: 'fas fa-shield-alt', itemClassName: 'skill-logo-item' },
-    { id: 'csharp', name: 'C#', iconClass: 'devicon-csharp-plain', itemClassName: 'skill-logo-item' },
-    { id: 'html', name: 'HTML', iconClass: 'fab fa-html5', itemClassName: 'skill-logo-item' },
-    { id: 'css', name: 'CSS', iconClass: 'fab fa-css3-alt', itemClassName: 'skill-logo-item' },
-    { id: 'javascript', name: 'JavaScript', iconClass: 'fab fa-js-square', itemClassName: 'skill-logo-item' },
-    { id: 'react', name: 'React', iconClass: 'fab fa-react', itemClassName: 'skill-logo-item' },
-    { id: 'unity', name: 'Unity', iconClass: 'fab fa-unity', itemClassName: 'skill-logo-item' },
-    { id: 'python', name: 'Python', iconClass: 'fab fa-python', itemClassName: 'skill-logo-item' },
-    { id: 'sqlite', name: 'SQLite', iconClass: 'fas fa-database', itemClassName: 'skill-logo-item' },
-];
+const ARAC_SATIR_1 = ['C#', 'Python', 'JavaScript', 'React', 'SQL', 'HTML', 'CSS'];
+const ARAC_SATIR_2 = ['Linux', 'Kali Linux', 'Unity', 'SQLite', 'CTF', 'Git'];
 
-const capabilitiesDataMelih = [
-    {
-        id: 'cybersec',
-        title: 'Siber Güvenlik',
-        description: 'CTF (Capture The Flag) yarışmalarında aktif olarak yer alıyorum. Web güvenliği, tersine mühendislik, steganografi ve şifre analizi gibi konularda çalışma deneyimim bulunmaktadır.',
-        iconClass: 'fas fa-shield-alt',
-        accentName: 'accent-4'
-    },
-    {
-        id: 'linux',
-        title: 'Linux',
-        description: 'Kali Linux başta olmak üzere Linux tabanlı sistemleri ve güvenlik araçlarını etkin biçimde kullanabiliyorum.',
-        iconClass: 'fab fa-linux',
-        accentName: 'accent-linux' // Linux'a özel renk sınıfı burada
-    },
-    {
-        id: 'web-dev',
-        title: 'Etkileşimli Web Uygulamaları',
-        description: 'HTML, CSS, JavaScript ve React kullanarak modern, kullanıcı dostu ve duyarlı web arayüzleri geliştiriyorum. API entegrasyonları ve bileşen tabanlı mimarilerle verimli projeler üretebilirim.',
-        iconClass: 'fas fa-laptop-code',
-        accentName: 'accent-1'
-    },
-    {
-        id: 'game-dev',
-        title: 'Oyun Geliştirme',
-        description: 'Unity oyun motoru ve C# programlama dili ile 2D ve 3D oyunlar geliştirme yetkinliğine sahibim. Oyun mekanikleri, kullanıcı arayüzü ve seviye tasarımı konularında çalışabilirim.',
-        iconClass: 'fas fa-gamepad',
-        accentName: 'accent-2'
-    },
-    {
-        id: 'algo-problem-solving',
-        title: 'Algoritmik Problem Çözme',
-        description: 'Karmaşık problemleri analiz etme, etkili algoritmalar tasarlama ve veri yapılarını kullanarak optimize çözümler geliştirme konularında yetkinim. Özellikle C# dilinde algoritmik düşünme becerilerimi aktif olarak kullanıyorum.',
-        iconClass: 'fas fa-brain',
-        accentName: 'accent-3',
-        centerLast: true
-    },
-];
+const Kayan = ({ ogeler, ters, cizgili }) => (
+    <div className={`kayan ${ters ? 'kayan--ters' : ''} ${cizgili ? 'kayan--cizgili' : ''}`} aria-hidden="true">
+        <div className="kayan-ic">
+            {[0, 1].map((k) => (
+                <span className="kayan-grup" key={k}>
+                    {ogeler.map((o) => <span key={o}>{o}<i>/</i></span>)}
+                </span>
+            ))}
+        </div>
+    </div>
+);
 
 const Skills = () => {
+    const kok = useRef(null);
+
+    useGSAP(() => {
+        if (hareketAzalt()) return;
+        gsap.utils.toArray('.alan').forEach((el) => {
+            gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 85%' } })
+                .from(el.querySelector('.alan-cizgi'), { scaleX: 0, duration: 1.2, ease: 'power3.inOut' })
+                .from(el.querySelectorAll('h3, p'), { yPercent: 40, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, 0.25);
+        });
+    }, { scope: kok });
+
     return (
-        <section id="neler-yapabilirim" className="bolum">
-            <div className="container">
-                <h2 className="bolum-baslik">Neler Yapabilirim?</h2>
-                <div className="capabilities-grid capabilities-grid-3col">
-                    {capabilitiesDataMelih.map((capability) => (
-                        <div
-                            key={capability.id}
-                            className={`capability-card ${capability.centerLast ? 'capability-card-center' : ''}`}
-                        >
-                            <div className={`capability-card-icon-wrapper ${capability.accentName}`}>
-                                <i className={`${capability.iconClass} capability-card-icon`}></i>
-                            </div>
-                            <h4 className="capability-card-title">{capability.title}</h4>
-                            <p className="capability-card-description">{capability.description}</p>
+        <section className="yetkinlikler" id="yetkinlikler" ref={kok} aria-labelledby="yetkinlikler-baslik">
+            <Kayan ogeler={ARAC_SATIR_1} />
+            <Kayan ogeler={ARAC_SATIR_2} ters cizgili />
+            <p className="sr-only">Kullandığım araçlar: {[...ARAC_SATIR_1, ...ARAC_SATIR_2].join(', ')}.</p>
+
+            <div className="kap">
+                <h2 id="yetkinlikler-baslik">Neler yapıyorum</h2>
+                <div className="alanlar">
+                    {alanlar.map((a) => (
+                        <div className="alan" key={a.ad}>
+                            <span className="alan-cizgi" aria-hidden="true" />
+                            <h3>{a.ad}</h3>
+                            <p>{a.metin}</p>
                         </div>
                     ))}
-                </div>
-
-                <div className="capabilities-section">
-                    <h3 className="bolum-baslik">Teknik Becerilerim</h3>
-                    {/* 5x2 Grid sınıfı burada çağrılıyor */}
-                    <div className="yetkinlikler-liste yetkinlikler-liste-5x2">
-                        {skillsData.map((skill) => (
-                            <div className={`yetkinlik-item ${skill.itemClassName || ''}`} key={skill.id}>
-                                <div className="skill-logo-wrapper">
-                                    {skill.iconClass ? (
-                                        <i className={`${skill.iconClass} skill-icon-large`}></i>
-                                    ) : null}
-                                </div>
-                                <h4>{skill.name}</h4>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </div>
         </section>
