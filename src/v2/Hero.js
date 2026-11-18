@@ -1,122 +1,119 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { gsap, useGSAP, hareketAzalt, git } from '../lib/anim';
 
 const harfler = (metin) => metin.split('').map((h, i) => (
     <span className="harf" key={i} aria-hidden="true">{h}</span>
 ));
 
+// Giriş: ad ekranı enlemesine doldurur. "BAŞDEMİR" (üstte) yüz hizasında görselin arkasında kalır,
+// "MELİH" (altta) boyun hizasında önden geçer; yüz hiçbir yazının altında kalmaz.
+// fare hareketinde üç katman farklı miktarda kayar ve derinlik hissi verir.
 const Hero = () => {
     const kok = useRef(null);
+
+    // En uzun satır ("BAŞDEMİR", üstte) tam genişliğe otursun diye yazı boyutu ölçülerek ayarlanır.
+    useEffect(() => {
+        const isim = kok.current.querySelector('.isim');
+        const alt = kok.current.querySelector('.isim-satir--ust .isim-ic');
+        const ayarla = () => {
+            isim.style.setProperty('--isim-boyut', '100px');
+            const genislik = alt.getBoundingClientRect().width;
+            const hedef = isim.getBoundingClientRect().width;
+            // Yatay telefonda tam genişlik adı ekrana sığmayacak kadar büyütür: yüksekliğe göre sınırlanır.
+            const yatayKisa = window.innerHeight < 520 && window.innerWidth > window.innerHeight;
+            const tavan = yatayKisa ? window.innerHeight * 0.16 : Infinity;
+            if (genislik > 0) isim.style.setProperty('--isim-boyut', `${Math.min((hedef / genislik) * 100 * 0.995, tavan)}px`);
+        };
+        ayarla();
+        document.fonts?.ready.then(ayarla);
+        window.addEventListener('resize', ayarla);
+        return () => window.removeEventListener('resize', ayarla);
+    }, []);
 
     useGSAP((_, contextSafe) => {
         if (hareketAzalt()) return undefined;
 
-        // Açılış: görsel alttan açılır, "Melih" harfleri maskeden yükselir,
-        // "BAŞDEMİR" harfleri incecik başlayıp kalınlaşarak belirir.
         gsap.timeline({ defaults: { ease: 'power4.out' } })
-            .fromTo('.giris-gorsel', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.8, ease: 'power4.inOut' }, 0)
-            .from('.giris-gorsel img', { scale: 1.18, duration: 2.4, ease: 'power3.out' }, 0)
-            .from('.isim-melih .harf', { yPercent: 110, rotate: 6, duration: 1.3, stagger: 0.05 }, 0.45)
-            .fromTo('.isim-basdemir .harf',
-                { '--w': 100, '--g': 125, opacity: 0 },
-                { '--w': 800, '--g': 75, opacity: 1, duration: 1.6, stagger: 0.05, ease: 'power3.out' }, 0.6)
-            .from('.giris-ust, .giris-ozet, .giris-rozetler li, .giris-alt > *', { y: 18, opacity: 0, duration: 1, stagger: 0.08 }, 1.1);
+            .fromTo('.giris-gorsel', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.8, ease: 'power4.inOut' }, 0.15)
+            .from('.giris-gorsel img', { scale: 1.2, duration: 2.4, ease: 'power3.out' }, 0.15)
+            .from('.isim .harf', { yPercent: 105, duration: 1.4, stagger: 0.045 }, 0.35)
+            .from('.giris-alt > *, .giris-dip > *', { y: 16, opacity: 0, duration: 1, stagger: 0.08 }, 1.2);
 
-        // Fare BAŞDEMİR'in üzerinde gezerken yakındaki harfler incelir ve genişler.
-        const basdemir = gsap.utils.toArray('.isim-basdemir .harf');
-        const kalinlik = basdemir.map((h) => gsap.quickTo(h, '--w', { duration: 0.6, ease: 'power3.out' }));
-        const genislik = basdemir.map((h) => gsap.quickTo(h, '--g', { duration: 0.6, ease: 'power3.out' }));
-        const isim = kok.current.querySelector('.isim');
-
+        const katman = (sec, kat) => {
+            const el = kok.current.querySelector(sec);
+            return {
+                x: gsap.quickTo(el, 'x', { duration: 1.4, ease: 'power3.out' }),
+                y: gsap.quickTo(el, 'y', { duration: 1.4, ease: 'power3.out' }),
+                kat,
+            };
+        };
+        const katmanlar = [katman('.isim-satir--ust', -10), katman('.giris-gorsel-ic', 16), katman('.isim-satir--alt', -26)];
         const hareket = contextSafe((e) => {
-            basdemir.forEach((h, i) => {
-                const r = h.getBoundingClientRect();
-                const dx = e.clientX - (r.left + r.width / 2);
-                const dy = e.clientY - (r.top + r.height / 2);
-                const f = Math.exp(-((dx * dx) / 14000 + (dy * dy) / 40000));
-                kalinlik[i](800 - 620 * f);
-                genislik[i](75 + 45 * f);
-            });
-        });
-        const ayril = contextSafe(() => {
-            kalinlik.forEach((k) => k(800));
-            genislik.forEach((g) => g(75));
-        });
-        isim.addEventListener('pointermove', hareket);
-        isim.addEventListener('pointerleave', ayril);
-
-        // Görsel fareye göre hafifçe derinlik kazanır.
-        const gorsel = kok.current.querySelector('.giris-gorsel-ic');
-        const gx = gsap.quickTo(gorsel, 'x', { duration: 1.2, ease: 'power3.out' });
-        const gy = gsap.quickTo(gorsel, 'y', { duration: 1.2, ease: 'power3.out' });
-        const gr = gsap.quickTo(gorsel, 'rotationY', { duration: 1.2, ease: 'power3.out' });
-        const sahneHareket = contextSafe((e) => {
             const nx = e.clientX / window.innerWidth - 0.5;
             const ny = e.clientY / window.innerHeight - 0.5;
-            gx(nx * -22);
-            gy(ny * -14);
-            gr(nx * 5);
+            katmanlar.forEach((k) => { k.x(nx * k.kat); k.y(ny * k.kat * 0.5); });
         });
-        kok.current.addEventListener('pointermove', sahneHareket);
+        kok.current.addEventListener('pointermove', hareket);
 
-        // Aşağı kaydırırken görsel uzaklaşıp söner; zemin sise dönerken arkada koyu blok kalmaz.
+        // Aşağı kaydırırken görsel ve yan yazılar söner; ad parçacıklara dönüşmek üzere yerinde kalır.
         gsap.fromTo('.giris-gorsel', { opacity: 1 }, {
-            yPercent: 8,
-            scale: 0.94,
             opacity: 0,
+            scale: 0.94,
             ease: 'none',
             immediateRender: false,
             scrollTrigger: { trigger: kok.current, start: 'top top', end: '55% top', scrub: true },
         });
-        gsap.fromTo('.giris-ust, .giris-ozet, .giris-rozetler, .giris-alt', { opacity: 1 }, {
+        gsap.fromTo('.giris-alt, .giris-dip', { opacity: 1 }, {
             opacity: 0,
-            y: -30,
+            y: -24,
             ease: 'none',
             immediateRender: false,
-            scrollTrigger: { trigger: kok.current, start: '5% top', end: '35% top', scrub: true },
+            scrollTrigger: { trigger: kok.current, start: '3% top', end: '30% top', scrub: true },
         });
 
-        return () => {
-            isim.removeEventListener('pointermove', hareket);
-            isim.removeEventListener('pointerleave', ayril);
-        };
+        return () => kok.current?.removeEventListener('pointermove', hareket);
     }, { scope: kok });
 
     return (
-        <section className="giris" id="basa" ref={kok} data-renk="gece">
-            <div className="giris-gorsel" aria-hidden="true">
+        <section className="giris" id="basa" ref={kok} data-renk="komur">
+            <div className="giris-gorsel">
                 <div className="giris-gorsel-ic">
-                    <img src="/images/melih-portre.jpg" alt="" fetchpriority="high" />
+                    <picture>
+                        <source srcSet="/images/melih-portre.webp" type="image/webp" />
+                        <img
+                            src="/images/melih-portre.jpg"
+                            alt="Melih Başdemir’in portresi: yüzünün bir yarısı devre kartı ve kod ekranlarına dönüşen dijital illüstrasyon"
+                            fetchpriority="high"
+                        />
+                    </picture>
                 </div>
             </div>
 
-            <div className="giris-metin">
-                <p className="giris-ust">
-                    <span className="durum-nokta" aria-hidden="true" />
-                    <span>Siber tehdit istihbaratı (CTI) / OSINT / Zafiyet analizi</span>
-                </p>
+            {/* Ad ve altındaki yazılar tek bir akışta: hiçbir ekran boyunda üst üste binmez. */}
+            <div className="giris-icerik">
                 <h1 className="isim" aria-label="Melih Başdemir">
-                    <span className="isim-melih">{harfler('Melih')}</span>
-                    <span className="isim-basdemir">{harfler('BAŞDEMİR')}</span>
+                    <span className="isim-satir isim-satir--ust"><span className="isim-ic">{harfler('BAŞDEMİR')}</span></span>
+                    <span className="isim-satir isim-satir--alt"><span className="isim-ic">{harfler('MELİH')}</span></span>
                 </h1>
-                <p className="giris-ozet">
-                    Tehdit aktörlerini izliyor, açık kaynaklardan istihbarat topluyor ve zafiyetleri analiz ediyorum.
-                    Balıkesir Üniversitesi’nde 4. sınıf bilgisayar mühendisliği öğrencisiyim; yazılım altyapımı
-                    siber güvenlik çalışmalarımla birleştiriyorum.
-                </p>
-                <ul className="giris-rozetler" aria-label="Öne çıkanlar">
-                    <li><b>CoreSynapseAI</b> CTI stajyeri</li>
-                    <li><b>Siber Vatan</b> CTF Türkiye finalisti</li>
-                    <li><b>TREX</b> Hackathon 1.’si</li>
-                </ul>
                 <div className="giris-alt">
-                    <a className="hap" href="#projeler" onClick={(e) => { e.preventDefault(); git('#projeler'); }}>
-                        Projelerime bak
-                    </a>
-                    <span className="kaydir-ipucu" aria-hidden="true">
-                        <span className="kaydir-cizgi" /> Kaydır
-                    </span>
+                    <p className="giris-cumle">
+                        Siber güvenlik odaklı bilgisayar mühendisi adayı. Tehditleri analiz ediyor;
+                        yazılım, mobil ve oyun geliştiriyorum.
+                    </p>
+                    <div className="giris-baglantilar">
+                        <a className="kare-link" href="#iletisim" onClick={(e) => { e.preventDefault(); git('#iletisim'); }}>
+                            Bana ulaş <span aria-hidden="true" />
+                        </a>
+                        <a className="kare-link kare-link--ince" href="/cv/Melih_Basdemir_CV.pdf" download>
+                            CV’mi indir <span aria-hidden="true" />
+                        </a>
+                    </div>
                 </div>
+            </div>
+
+            <div className="giris-dip">
+                <p>Balıkesir Üniversitesi, Bilgisayar Mühendisliği</p>
+                <p className="kaydir-ipucu" aria-hidden="true">Kaydır <span className="kaydir-cizgi" /></p>
             </div>
         </section>
     );

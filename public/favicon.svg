@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#121316"/>
+  <rect x="1" y="1" width="62" height="62" rx="13" fill="none" stroke="#ECEAE4" stroke-opacity=".18" stroke-width="1.5"/>
+  <!-- M: köşeli, Squada One tarzı -->
+  <path fill="#ECEAE4" d="M9 18h5.6l5.4 11.5L25.4 18H31v28h-5V29.5l-4 8.5h-4l-4-8.5V46H9z"/>
+  <!-- B: pahlı köşeler, iki dikdörtgen boşluk -->
+  <path fill="#ECEAE4" fill-rule="evenodd" d="M34 18h16l4 4v7l-2.5 3 2.5 3v7l-4 4H34zm5 4.6v7.4h9.8v-7.4zm0 11.8v7.6h9.8v-7.6z"/>
+</svg>

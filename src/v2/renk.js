@@ -1,58 +1,73 @@
 import { gsap, ScrollTrigger } from '../lib/anim';
 
-// Her bölümün kendi paleti var; kaydırdıkça bir sonrakine akıcı geçilir.
-// zemin/yazi/soluk/vurgu sayfa renkleri, pk/pa parçacıkların gölge ve ışık renkleri,
-// isik: sayfanın arkasında süzülen yumuşak ışığın rengi.
-// Tek bir soğuk aile: gece laciverti → sis grisi → açık buz → mavi gri → tekrar gece.
-// Beyaz yok: açık bölümler bile çelik grisi. Sayfa aşağı indikçe adım adım koyulaşır,
-// sonunda girişteki geceye geri döner. sinyal: siber detaylar (terminal, kod etiketi) için camgöbeği;
-// açık zeminde okunabilsin diye koyusu kullanılır.
+// Palet: kömür ve kar. Sayfa yalnızca iki kez "nefes alır": koyudan sise, sisten tekrar koyuya.
+// zemin/yazi/soluk/vurgu/sinyal sayfa renkleri; pk/pa parçacıkların gölge ve ışık renkleri;
+// isik: sayfanın arkasında süzülen yumuşak ışık.
 export const PALET = {
-    gece: { zemin: '#050B17', yazi: '#E9EDF5', soluk: '#8A95AB', vurgu: '#5B8DEF', sinyal: '#22D3EE', pk: '#1B2740', pa: '#E9EDF5', isik: '#1D3F86' },
-    sis: { zemin: '#BCC5D0', yazi: '#0D131F', soluk: '#465163', vurgu: '#1F5FD6', sinyal: '#0B6E82', pk: '#222934', pa: '#FFFFFF', isik: '#E6ECF4' },
-    buz: { zemin: '#AEB8C6', yazi: '#0B111C', soluk: '#3F4A5B', vurgu: '#1A56C4', sinyal: '#085E70', pk: '#222934', pa: '#FFFFFF', isik: '#D3DDEB' },
-    arduvaz: { zemin: '#98A5B7', yazi: '#0A101B', soluk: '#323D4D', vurgu: '#174DB0', sinyal: '#06505F', pk: '#222934', pa: '#FFFFFF', isik: '#7E95BD' },
-    kozmos: { zemin: '#0B1628', yazi: '#E9EDF5', soluk: '#8C98AE', vurgu: '#7FA8F5', sinyal: '#22D3EE', pk: '#1B2740', pa: '#E9EDF5', isik: '#1F4C9A' },
-    derin: { zemin: '#08111F', yazi: '#E9EDF5', soluk: '#8C98AE', vurgu: '#7FA8F5', sinyal: '#22D3EE', pk: '#1B2740', pa: '#E9EDF5', isik: '#24509F' },
+    komur: { zemin: '#121316', yazi: '#ECEAE4', soluk: '#8F9095', vurgu: '#9DB4C8', sinyal: '#9DB4C8', pk: '#25272D', pa: '#ECEAE4', isik: '#2C3038' },
+    sis: { zemin: '#C3C7CD', yazi: '#15161A', soluk: '#4B4F57', vurgu: '#304B66', sinyal: '#304B66', pk: '#2A2D33', pa: '#FFFFFF', isik: '#E4E7EB' },
+    kar: { zemin: '#B9BEC5', yazi: '#131417', soluk: '#454951', vurgu: '#304B66', sinyal: '#304B66', pk: '#2A2D33', pa: '#FFFFFF', isik: '#D5D9DE' },
+    gece: { zemin: '#0F1012', yazi: '#ECEAE4', soluk: '#8F9095', vurgu: '#9DB4C8', sinyal: '#9DB4C8', pk: '#25272D', pa: '#ECEAE4', isik: '#262A31' },
 };
 
 const ZEMIN_ALANLARI = ['zemin', 'vurgu', 'pk', 'pa', 'isik'];
 const YAZI_ALANLARI = ['yazi', 'soluk', 'sinyal'];
 
 // Anlık renkler; parçacık sahnesi her karede buradan okur.
-export const renk = { ...PALET.gece };
+export const renk = { ...PALET.komur };
 
 const kok = () => document.documentElement.style;
 
+// Göreli parlaklık; GSAP'in ara değerleri "rgba(r, g, b, a)" biçiminde gelebilir.
+const parlaklik = (deger) => {
+    let rr; let gg; let bb;
+    if (deger[0] === '#') {
+        const n = parseInt(deger.slice(1), 16);
+        rr = n >> 16; gg = (n >> 8) & 255; bb = n & 255;
+    } else {
+        [rr, gg, bb] = (deger.match(/[\d.]+/g) || [0, 0, 0]).map(Number);
+    }
+    return (0.2126 * rr + 0.7152 * gg + 0.0722 * bb) / 255;
+};
+
+// Kökteki CSS değişkenleri değişince tarayıcı bütün sayfanın stilini yeniden hesaplar.
+// Bu yüzden yalnızca gerçekten değişen değişkenler yazılır.
+const yazilan = {};
+const yaz = (s, ad, deger) => {
+    if (yazilan[ad] === deger) return;
+    yazilan[ad] = deger;
+    s.setProperty(ad, deger);
+};
+
 export function uygula() {
     const s = kok();
-    s.setProperty('--zemin', renk.zemin);
-    s.setProperty('--yazi', renk.yazi);
-    s.setProperty('--soluk', renk.soluk);
-    s.setProperty('--vurgu', renk.vurgu);
-    s.setProperty('--isik', renk.isik);
-    s.setProperty('--sinyal', renk.sinyal);
+    yaz(s, '--zemin', renk.zemin);
+    yaz(s, '--yazi', renk.yazi);
+    yaz(s, '--soluk', renk.soluk);
+    yaz(s, '--vurgu', renk.vurgu);
+    yaz(s, '--sinyal', renk.sinyal);
+    yaz(s, '--isik', renk.isik);
+    // Karlı zemin dokusu yalnızca açık zeminde görünür: parlaklık arttıkça belirginleşir.
+    const p = parlaklik(renk.zemin);
+    yaz(s, '--kar-goster', Math.max(0, Math.min(1, (p - 0.3) / 0.35)).toFixed(2));
 }
 
-const parlaklik = (hex) => {
-    const n = parseInt(hex.slice(1), 16);
-    return (0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255;
-};
+
 const sec = (p, alanlar) => Object.fromEntries(alanlar.map((a) => [a, p[a]]));
 
 // [data-renk] taşıyan bölümler sırayla bir önceki paletten kendi paletlerine geçer.
-// Zemin uzun ve yumuşak bir aralıkta akar. Açıktan koyuya (ya da tersi) geçişte yazı rengi ise
-// kısa bir aralıkta, zeminin ortadan geçtiği anda döner; böylece ara tonda yazı bulanıklaşmaz.
+// Zemin uzun bir aralıkta akar. Açıktan koyuya (ya da tersi) geçişte yazı rengi kısa bir aralıkta,
+// zeminin ortadan geçtiği anda döner; böylece ara tonda yazı bulanıklaşmaz.
 export function renkYolculugu() {
     const bolumler = gsap.utils.toArray('[data-renk]');
     const tetikler = [];
-    let onceki = PALET[bolumler[0]?.dataset.renk] || PALET.gece;
+    let onceki = PALET[bolumler[0]?.dataset.renk] || PALET.komur;
     Object.assign(renk, onceki);
     uygula();
 
     bolumler.slice(1).forEach((el) => {
         const hedef = PALET[el.dataset.renk];
-        if (!hedef) return;
+        if (!hedef || hedef === onceki) return;
         const ters = Math.abs(parlaklik(onceki.zemin) - parlaklik(hedef.zemin)) > 0.4;
 
         tetikler.push(gsap.fromTo(renk, sec(onceki, ZEMIN_ALANLARI), {
@@ -60,7 +75,7 @@ export function renkYolculugu() {
             ease: 'none',
             immediateRender: false,
             onUpdate: uygula,
-            scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 10%', scrub: true },
+            scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 15%', scrub: true },
         }));
         tetikler.push(gsap.fromTo(renk, sec(onceki, YAZI_ALANLARI), {
             ...sec(hedef, YAZI_ALANLARI),
@@ -68,8 +83,8 @@ export function renkYolculugu() {
             immediateRender: false,
             onUpdate: uygula,
             scrollTrigger: ters
-                ? { trigger: el, start: 'top 56%', end: 'top 44%', scrub: true }
-                : { trigger: el, start: 'top 90%', end: 'top 10%', scrub: true },
+                ? { trigger: el, start: 'top 58%', end: 'top 46%', scrub: true }
+                : { trigger: el, start: 'top 95%', end: 'top 15%', scrub: true },
         }));
         onceki = hedef;
     });

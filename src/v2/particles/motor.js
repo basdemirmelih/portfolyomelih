@@ -36,7 +36,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         return null;
     }
     const ADET = mobil ? 12000 : 30000;
-    const dpr = Math.min(window.devicePixelRatio || 1, mobil ? 1.5 : 2);
+    // Nokta bulutunda 1.5 üstü çözünürlük gözle fark edilmez ama GPU yükünü ikiye katlar.
+    const dpr = Math.min(window.devicePixelRatio || 1, mobil ? 1.25 : 1.5);
     renderer.setPixelRatio(dpr);
     kap.appendChild(renderer.domElement);
 
@@ -122,7 +123,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         renderer.setSize(W, H, false);
         kamera.aspect = W / H;
         const yarimTan = Math.tan(THREE.MathUtils.degToRad(kamera.fov / 2));
-        const dar = W < 900;
+        // Dar ve dikey ekran: şekil üstte. Yatay telefon masaüstü gibi davranır (yazı solda, şekil sağda).
+        const dar = W < 900 && H > W * 0.75;
         const z = Math.max(10, (dar ? 2.0 : 2.6) / (yarimTan * kamera.aspect));
         kamera.position.set(0, 0, z);
         kamera.lookAt(0, 0, 0);
@@ -130,7 +132,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         gorunur.h = 2 * z * yarimTan;
         gorunur.w = gorunur.h * kamera.aspect;
         // Masaüstünde şekil sağa yaslanır (solda yazılar var), telefonda üst yarıya çıkar.
-        sekilKaydir = dar ? new THREE.Vector3(0, gorunur.h * 0.2, 0) : new THREE.Vector3(gorunur.w * 0.16, -0.1, 0);
+        sekilKaydir = dar ? new THREE.Vector3(0, gorunur.h * 0.25, 0) : new THREE.Vector3(gorunur.w * (kamera.aspect > 1.9 ? 0.24 : 0.16), -0.1, 0); // çok geniş ekranda (yatay telefon) daha sağa
         u.uFogNear.value = z - 1.6;
         u.uFogFar.value = z + 9;
         const pikselBirim = (H * dpr) / (2 * yarimTan);

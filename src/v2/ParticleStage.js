@@ -13,14 +13,14 @@ const ALANLAR = [
     {
         kod: 'VULN',
         ad: 'Zafiyet analizi',
-        metin: 'Hack The Box ve Hackviser laboratuvarlarında aktif ve pasif bilgi toplama, güvenlik taraması ve temel sızma testi çalışıyorum. Wireshark ile paket inceliyorum.',
+        metin: 'Laboratuvar ortamlarında aktif ve pasif bilgi toplama, güvenlik taraması ve temel sızma testi çalışıyorum; Wireshark ile ağ trafiğini paket düzeyinde inceliyorum.',
         etiketler: ['Nmap', 'Metasploit', 'Wireshark', 'Kali Linux'],
     },
     {
         kod: 'DEV',
         ad: 'Yazılım geliştirme',
-        metin: 'C#, Java ve Python ile nesne yönelimli yazılım; Flutter ile mobil, React ile web arayüzleri geliştiriyorum. SQL ile veri tarafını kuruyorum.',
-        etiketler: ['C#', 'Python', 'Java', 'React', 'Flutter'],
+        metin: 'C#, Java ve Python ile nesne yönelimli yazılım geliştiriyorum. Flutter ile mobil uygulamalar; HTML, CSS, JavaScript ve React ile web arayüzleri kuruyor, veri tarafını SQL ile yönetiyorum.',
+        etiketler: ['C#', 'Python', 'Java', 'Flutter', 'React', 'JavaScript', 'SQL'],
     },
     {
         kod: 'GAME',
@@ -44,7 +44,7 @@ const ParticleStage = ({ fontlarHazir }) => {
     const tuval = useRef(null);
     const motor = useRef(null);
     const [aktif, setAktif] = useState(0);
-    const [q, setQ] = useState(0);
+    const ilerleme = useRef(null);
     const azalt = hareketAzalt();
 
     useEffect(() => {
@@ -59,8 +59,9 @@ const ParticleStage = ({ fontlarHazir }) => {
             anticipatePin: 1,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
-                setQ(self.progress);
-                setAktif(aktifAlan(self.progress));
+                if (ilerleme.current) ilerleme.current.style.transform = `scaleX(${self.progress.toFixed(4)})`;
+                const yeni = aktifAlan(self.progress);
+                setAktif((a) => (a === yeni ? a : yeni));
             },
         });
 
@@ -82,7 +83,6 @@ const ParticleStage = ({ fontlarHazir }) => {
                     if (!isim || Math.abs(o - sonIsimOpaklik) < 0.01) return;
                     sonIsimOpaklik = o;
                     isim.style.opacity = String(o);
-                    isim.style.filter = o < 1 ? `blur(${(1 - o) * 8}px)` : '';
                 },
             };
         };
@@ -91,6 +91,7 @@ const ParticleStage = ({ fontlarHazir }) => {
         if (!azalt) {
             import('./particles/motor').then(({ motorKur }) => {
                 if (iptal) return;
+                if (!tuval.current) return;
                 motor.current = motorKur(tuval.current, { renk, kaydirma, mobil, hareketAzalt: azalt });
             });
         }
@@ -99,14 +100,17 @@ const ParticleStage = ({ fontlarHazir }) => {
             iptal = true;
             motor.current?.yokEt();
             motor.current = null;
-            tetik?.kill();
-            if (isim) { isim.style.opacity = ''; isim.style.filter = ''; }
+            tetik?.kill(true); // sabitlemeyi geri al: bölüm DOM'daki yerine döner
+            if (isim) { isim.style.opacity = ''; }
         };
     }, [fontlarHazir, azalt]);
 
     return (
         <>
             <div className="parcacik-tuval" ref={tuval} aria-hidden="true" />
+            {/* ScrollTrigger sabitlerken bölümü bir "pin-spacer" içine taşır. Sarmalayıcı sayesinde React
+                kaldırma sırasında hep kendi bildiği düğümü kaldırır (yoksa removeChild hatası). */}
+            <div className="sahne-sarmal">
             <section className="sahne" id="yetkinlikler" ref={bolum} data-renk="sis" aria-labelledby="sahne-baslik">
                 <div className="sahne-ic">
                     <div className="sahne-yazi">
@@ -129,12 +133,13 @@ const ParticleStage = ({ fontlarHazir }) => {
                             ))}
                         </div>
                         <div className="sahne-ilerleme" aria-hidden="true">
-                            <span style={{ transform: `scaleX(${q})` }} />
+                            <span ref={ilerleme} style={{ transform: 'scaleX(0)' }} />
                         </div>
                     </div>
                     <p className="sahne-ipucu" aria-hidden="true">Fareyi parçacıkların üzerinde gezdir</p>
                 </div>
             </section>
+            </div>
         </>
     );
 };

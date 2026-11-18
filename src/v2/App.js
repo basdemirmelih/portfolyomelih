@@ -3,10 +3,11 @@ import Lenis from 'lenis';
 import Header from './Header';
 import Hero from './Hero';
 import ParticleStage from './ParticleStage';
-import Projects from './Projects';
+import Seritler from './Seritler';
 import About from './About';
-import Vitrin from './Vitrin';
+import Calismalar from './Calismalar';
 import Contact from './Contact';
+import Zemin from './Zemin';
 import { gsap, ScrollTrigger, kaydirici, hareketAzalt } from '../lib/anim';
 import { renkYolculugu } from './renk';
 
@@ -19,6 +20,7 @@ function App() {
         if (azalt) return undefined;
         const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
         kaydirici.lenis = lenis;
+        lenis.scrollTo(0, { immediate: true, force: true });
         lenis.on('scroll', ScrollTrigger.update);
         const tik = (t) => lenis.raf(t * 1000);
         gsap.ticker.add(tik);
@@ -47,15 +49,17 @@ function App() {
 
     return (
         <>
+            <Zemin />
             <div className="atmosfer" aria-hidden="true" />
-            <a className="atla" href="#projeler">İçeriğe geç</a>
+            <div className="doku" aria-hidden="true" />
+            <a className="atla" href="#yetkinlikler">İçeriğe geç</a>
             <Header />
             <main>
                 <Hero />
                 <ParticleStage fontlarHazir={fontlar} />
-                <Projects />
+                <Seritler />
                 <About />
-                <Vitrin />
+                <Calismalar />
             </main>
             <Contact />
         </>
