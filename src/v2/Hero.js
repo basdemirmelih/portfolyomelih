@@ -80,6 +80,22 @@ const Hero = () => {
             scrollTrigger: { trigger: kok.current, start: '3% top', end: '30% top', scrub: true },
         });
 
+        // Telefon: ad parçacıklara dönüşmez. Satırlar kendi maskelerinin içinde yukarı kayıp çıkar
+        // (yalnızca hareket; her satır ayrı katmanda, ekran kartında). Kaydırmayla birebir hareket ettiği için
+        // asla geride kalmaz.
+        // (ParticleStage ile aynı telefon kararı: dokunmatik ya da çok dar ekran)
+        if (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 700) {
+            // Üst satır (ve üstündeki soluk kopyası) önce, alt satır biraz arkadan
+            const ust = kok.current.querySelectorAll('.isim-satir--ust .isim-ic, .isim-satir--hayalet .isim-ic');
+            const alt = kok.current.querySelector('.isim-satir--alt .isim-ic');
+            gsap.timeline({
+                defaults: { ease: 'power2.in', duration: 1 },
+                scrollTrigger: { trigger: kok.current, start: '4% top', end: '42% top', scrub: true },
+            })
+                .fromTo(ust, { yPercent: 0 }, { yPercent: -112, immediateRender: false }, 0)
+                .fromTo(alt, { yPercent: 0 }, { yPercent: -112, immediateRender: false }, 0.18);
+        }
+
         return () => kok.current?.removeEventListener('pointermove', hareket);
     }, { scope: kok });
 

@@ -59,6 +59,22 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     const onbellek = {};
     const sekil = (anahtar) => onbellek[anahtar] || null;
     onbellek[0] = ornekle(SEKILLER[0], ADET);
+    // Telefon: ad parçacığa dönüşmez; kalkan, yetenekler bölümüne girilince dağınık bir buluttan toplanır.
+    // Bu toplanma kaydırmaya değil zamana bağlıdır (sayfanın hareketinden geri kalmaz).
+    if (mobil) {
+        const konum = new Float32Array(ADET * 3);
+        const normal = new Float32Array(ADET * 3);
+        const v = new THREE.Vector3();
+        for (let i = 0; i < ADET; i += 1) {
+            v.randomDirection().multiplyScalar(1.1 + Math.sqrt(Math.random()) * 1.9);
+            v.y *= 0.85;
+            v.toArray(konum, i * 3);
+            v.randomDirection().toArray(normal, i * 3);
+        }
+        onbellek.bulut = { konum, normal };
+    }
+    const toplanma = { durum: 'bekliyor', t0: 0 };
+    const TOPLANMA_SURE = 1.15;
     // requestIdleCallback olmayan tarayıcılarda (iOS Safari) hazırlık, kaydırma durunca yapılır;
     // aksi halde şekil hazırlanırken kaydırma takılırdı.
     let sonKaydirma = 0;
@@ -187,7 +203,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         }
     });
     // Girişteki harf animasyonu (~2,1 sn) bitmeden örneklenmez; yoksa harfler yolda ölçülürdü.
-    const isimZamanlayici = setTimeout(isimHazirla, 2600);
+    const isimZamanlayici = mobil ? 0 : setTimeout(isimHazirla, 2600);
     // Adres çubuğu yüzünden yalnızca yükseklik biraz değiştiyse (telefon) yeniden kurulmaz; şekiller zıplamaz.
     const yenidenBoyutla = () => {
         const yeniW = kap.clientWidth;
@@ -242,7 +258,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         // Sahne bitti ve şekil tamamen söndü: bu karede yapılacak iş yok
         if (k.sahne >= 1 && k.sonrasi > H * 0.6) {
             if (gorunurlukSon !== 0) { kap.style.opacity = '0'; gorunurlukSon = 0; }
-            k.isimOpaklik(0);
+            if (!mobil) k.isimOpaklik(0);
             return;
         }
         const wpp = gorunur.h / H; // bir pikselin dünya birimi
@@ -261,7 +277,12 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         u.uToRot.value = 1;
         let isimOpaklik = 1;
 
-        if (k.sahne <= 0) {
+        if (k.sahne <= 0 && mobil) {
+            // A-telefon) Girişte parçacık yok (ad, sayfanın kendisiyle maskeli kayarak çıkar). Yukarı dönülürse
+            // bir sonraki girişte kalkan yine buluttan toplanır.
+            opaklik = 0;
+            if (k.giris < 0.85) toplanma.durum = 'bekliyor';
+        } else if (k.sahne <= 0) {
             // A) Giriş: isim dağılıp kalkana akar. İsim sayfayla birlikte yukarı kayar.
             if (k.giris > 0.005 && (isimGecersiz || !onbellek.isim)) {
                 const o = isimOrnekle(ADET, gorunur);
@@ -281,7 +302,14 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         } else if (k.sahne < 1) {
             // B) Sabit sahne: şekiller sırayla birbirine dönüşür
             const dz = sahneDurumu(k.sahne);
-            if (ciftYukle(dz.a, dz.b)) ilerleme = dz.ilerleme;
+            if (mobil && toplanma.durum === 'bekliyor') { toplanma.durum = 'suruyor'; toplanma.t0 = t; }
+            const g = (t - toplanma.t0) / TOPLANMA_SURE;
+            if (mobil && toplanma.durum === 'suruyor' && (g >= 1 || dz.a !== 0 || dz.ilerleme > 0)) toplanma.durum = 'bitti';
+            if (mobil && toplanma.durum === 'suruyor' && ciftYukle('bulut', 0)) {
+                // Buluttan kalkana: dalga halinde, yumuşak toplanma; parçacıklar belirerek gelir
+                ilerleme = egri(sinirla(g));
+                opaklik = sinirla(g * 3);
+            } else if (ciftYukle(dz.a, dz.b)) ilerleme = dz.ilerleme;
             // Sonraki şekil henüz hazır değilse (çok hızlı kaydırma) mevcut şekil sabit kalır, takılma olmaz
             else if (ciftYukle(dz.a, dz.a)) ilerleme = 0;
             isimOpaklik = 0;
@@ -314,7 +342,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         // Akış gücü iz uzunluğuyla artar (hızlı hareket = güçlü sürüklenme), en fazla 1
         u.uAkis.value = Math.min(1, Math.hypot(imlec.x - imlec.ix, imlec.y - imlec.iy) / (u.uRadius.value * 1.2));
 
-        k.isimOpaklik(isimOpaklik);
+        if (!mobil) k.isimOpaklik(isimOpaklik);
         if (opaklik !== gorunurlukSon) {
             kap.style.opacity = String(opaklik);
             gorunurlukSon = opaklik;
