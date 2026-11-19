@@ -7,7 +7,8 @@ const egri = (t) => t * t * (3 - 2 * t);
 const sinirla = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
 // Sahne sırası: kalkan (tehdit istihbaratı) → nişangâh (zafiyet analizi) → </> (yazılım) → oyun kolu
-export const SEKILLER = [SEKIL_URETICILERI[1], SEKIL_URETICILERI[4], SEKIL_URETICILERI[2], SEKIL_URETICILERI[3]];
+const SIRA = [1, 4, 2, 3]; // SEKIL_URETICILERI içindeki karşılıkları
+export const SEKILLER = SIRA.map((u) => SEKIL_URETICILERI[u]);
 const SON = SEKILLER.length - 1;
 
 // Sabit sahnedeki ilerleme (0..1) şekil çiftine ve geçiş oranına çevrilir.
@@ -49,15 +50,12 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     const kamera = new THREE.PerspectiveCamera(35, 1, 0.1, 80);
     const gorunur = { w: 1, h: 1 };
 
-    // Şekil noktaları: ilk şekil hemen, diğerleri tarayıcı boştayken hazırlanır.
+    // Şekil noktaları: ilk şekil (kalkan) hemen hazırlanır; diğerleri ayrı bir iş parçacığında
+    // (sekil.worker.js). Bir şekil henüz hazır değilse bekleyip kaydırmayı dondurmak yerine bir önceki
+    // şekil ekranda kalır; hazır olunca geçiş sürer. Hiçbir şekil kaydırma sırasında hazırlanmaz.
     const onbellek = {};
-    const sekil = (anahtar) => {
-        if (onbellek[anahtar]) return onbellek[anahtar];
-        if (anahtar === 'isim') return null;
-        onbellek[anahtar] = ornekle(SEKILLER[anahtar], ADET);
-        return onbellek[anahtar];
-    };
-    sekil(0);
+    const sekil = (anahtar) => onbellek[anahtar] || null;
+    onbellek[0] = ornekle(SEKILLER[0], ADET);
     // requestIdleCallback olmayan tarayıcılarda (iOS Safari) hazırlık, kaydırma durunca yapılır;
     // aksi halde şekil hazırlanırken kaydırma takılırdı.
     let sonKaydirma = 0;
@@ -70,16 +68,25 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
             setTimeout(dene, 250);
         };
     let iptal = false;
-    // Kalan şekiller sırayla, tarayıcı boştayken hazırlanır.
+    // Yedek yol (iş parçacığı açılamazsa): kalan şekiller sırayla, tarayıcı boştayken hazırlanır.
     const sonrakiniHazirla = (i) => {
         if (i > SON) return;
         bosta(() => {
             if (iptal) return;
-            sekil(i);
+            if (!onbellek[i]) onbellek[i] = ornekle(SEKILLER[i], ADET);
             sonrakiniHazirla(i + 1);
         });
     };
-    sonrakiniHazirla(1);
+    let isci = null;
+    try {
+        isci = new Worker(new URL('./sekil.worker.js', import.meta.url));
+        isci.onmessage = ({ data }) => { onbellek[data.i] = { konum: data.konum, normal: data.normal }; };
+        isci.onerror = () => { isci?.terminate(); isci = null; sonrakiniHazirla(1); };
+        isci.postMessage({ adet: ADET, isler: SIRA.slice(1).map((u, j) => ({ i: j + 1, u })) });
+    } catch (e) {
+        isci = null;
+        sonrakiniHazirla(1);
+    }
 
     const geo = new THREE.BufferGeometry();
     const ilk = sekil(0);
@@ -263,12 +270,13 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         } else if (k.sahne < 1) {
             // B) Sabit sahne: şekiller sırayla birbirine dönüşür
             const dz = sahneDurumu(k.sahne);
-            ciftYukle(dz.a, dz.b);
-            ilerleme = dz.ilerleme;
+            if (ciftYukle(dz.a, dz.b)) ilerleme = dz.ilerleme;
+            // Sonraki şekil henüz hazır değilse (çok hızlı kaydırma) mevcut şekil sabit kalır, takılma olmaz
+            else if (ciftYukle(dz.a, dz.a)) ilerleme = 0;
             isimOpaklik = 0;
         } else {
             // C) Sahne bitti: şekil sayfayla yukarı kayar ve söner.
-            ciftYukle(SON - 1, SON);
+            if (!ciftYukle(SON - 1, SON)) ciftYukle(0, 0);
             ilerleme = 1;
             const fazla = k.sonrasi;
             u.uToOff.value.y += fazla * wpp;
@@ -298,6 +306,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         isimiYenile: () => { isimGecersiz = true; },
         yokEt: () => {
             iptal = true;
+            isci?.terminate();
             clearTimeout(isimZamanlayici);
             cancelAnimationFrame(raf);
             window.removeEventListener('resize', yenidenBoyutla);
