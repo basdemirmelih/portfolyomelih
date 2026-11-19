@@ -232,6 +232,11 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     };
 
     const saat = new THREE.Clock();
+    // Simge dönüşümü kaydırmayı yumuşak bir takiple izler: kaydırma (özellikle telefonda) kesik adımlarla
+    // gelse de dönüşüm akıcı ilerler. Şekil çifti değişince takip baştan başlar.
+    let yumusakCift = '';
+    let yumusakIlerleme = 0;
+    let oncekiT = 0;
     let raf = 0;
     let gorunurlukSon = -1;
 
@@ -262,8 +267,13 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         let isimOpaklik = 1;
 
         if (k.sahne <= 0 && mobil) {
-            // A-telefon) Girişte parçacık yok: ad sayfayla birlikte normal kayar, kalkan yetenekler bölümünde hazır.
-            opaklik = 0;
+            // A-telefon) Ad parçacığa dönüşmez. Yetenekler bölümü ekrana girerken kalkan, sabitleneceği yerde
+            // yavaşça belirir: giriş ile yetenekler arasında boşluk kalmaz. Kalkan zaten sabit durduğu için
+            // sayfanın kaymasıyla senkron derdi yoktur.
+            if (ciftYukle(0, 0)) {
+                ilerleme = 0;
+                opaklik = egri(sinirla((k.giris - 0.42) / 0.5));
+            } else opaklik = 0;
         } else if (k.sahne <= 0) {
             // A) Giriş: isim dağılıp kalkana akar. İsim sayfayla birlikte yukarı kayar.
             if (k.giris > 0.005 && (isimGecersiz || !onbellek.isim)) {
@@ -284,7 +294,12 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         } else if (k.sahne < 1) {
             // B) Sabit sahne: şekiller sırayla birbirine dönüşür
             const dz = sahneDurumu(k.sahne);
-            if (ciftYukle(dz.a, dz.b)) ilerleme = dz.ilerleme;
+            if (ciftYukle(dz.a, dz.b)) {
+                const dt = Math.min(0.1, Math.max(0, t - oncekiT));
+                if (ciftAnahtar !== yumusakCift) { yumusakCift = ciftAnahtar; yumusakIlerleme = dz.ilerleme; }
+                else yumusakIlerleme += (dz.ilerleme - yumusakIlerleme) * (1 - Math.exp(-dt * 8));
+                ilerleme = yumusakIlerleme;
+            }
             // Sonraki şekil henüz hazır değilse (çok hızlı kaydırma) mevcut şekil sabit kalır, takılma olmaz
             else if (ciftYukle(dz.a, dz.a)) ilerleme = 0;
             isimOpaklik = 0;
@@ -298,6 +313,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
             isimOpaklik = 0;
         }
 
+        oncekiT = t;
         u.uProgress.value = ilerleme;
         u.uOpaklik.value = 1;
         u.uTime.value = t;

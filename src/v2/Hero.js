@@ -80,7 +80,16 @@ const Hero = () => {
             scrollTrigger: { trigger: kok.current, start: '3% top', end: '30% top', scrub: true },
         });
 
-        // Telefon: ad parçacığa dönüşmez; sayfayla birlikte normal şekilde yukarı kayıp gider.
+        // Telefon: ad parçacığa dönüşmez; sayfayla yukarı kayarken, zemin açık renge dönmeden yumuşakça söner
+        // (satırlar kendi katmanında: yalnızca saydamlık değişir).
+        if (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 700) {
+            gsap.fromTo('.isim .isim-satir', { opacity: 1 }, {
+                opacity: 0,
+                ease: 'power1.in',
+                immediateRender: false,
+                scrollTrigger: { trigger: kok.current, start: '12% top', end: '50% top', scrub: true },
+            });
+        }
 
         return () => kok.current?.removeEventListener('pointermove', hareket);
     }, { scope: kok });
