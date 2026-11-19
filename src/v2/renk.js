@@ -16,7 +16,6 @@ const YAZI_ALANLARI = ['yazi', 'soluk', 'sinyal'];
 // Anlık renkler; parçacık sahnesi her karede buradan okur.
 export const renk = { ...PALET.komur };
 
-const kok = () => document.documentElement.style;
 
 // Göreli parlaklık; GSAP'in ara değerleri "rgba(r, g, b, a)" biçiminde gelebilir.
 const parlaklik = (deger) => {
@@ -30,41 +29,52 @@ const parlaklik = (deger) => {
     return (0.2126 * rr + 0.7152 * gg + 0.0722 * bb) / 255;
 };
 
-// Kökteki CSS değişkenleri değişince tarayıcı bütün sayfanın stilini yeniden hesaplar.
-// Bu yüzden yalnızca gerçekten değişen değişkenler yazılır.
+// Akıcılık: kökteki CSS değişkenlerini kaydırmanın her karesinde yazmak, tarayıcıyı her karede bütün
+// sayfanın stilini yeniden hesaplamaya ve ekranı baştan boyamaya zorluyordu (telefonda geçiş takılıyordu).
+// Şimdi:
+//  - Zemin: her palet için sabit, tek renkli bir katman vardır; geçişte yalnızca katmanın saydamlığı değişir.
+//    Bu işi doğrudan ekran kartı yapar, sayfa yeniden boyanmaz.
+//  - Yazı ve vurgu renkleri: geçişin ortasında bir kez değişir (zemin o anda ara tondadır).
+//  - Kar dokusu ve arka plan ışığı: değişken yalnızca kendi öğelerine yazılır, bütün sayfaya değil.
+//  - Parçacıklar renkleri her karede JS nesnesinden (renk) okumaya devam eder.
 const yazilan = {};
-// Telefonda renk geçişi kademeli yazılır (her kanal 4'lük adımlarla): göz farkı görmez ama sayfanın
-// yeniden boyanma sayısı yaklaşık dörtte birine iner; kaydırma sırasında kasmayı azaltır.
-const ADIM = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 860px)').matches ? 4 : 1;
-const kademele = (deger) => {
-    if (ADIM === 1 || deger[0] === '#') return deger;
-    const m = deger.match(/[\d.]+/g);
-    if (!m || m.length < 3) return deger;
-    const k = (v) => Math.min(255, Math.round(Number(v) / ADIM) * ADIM);
-    return m.length > 3 && Number(m[3]) < 1
-        ? `rgba(${k(m[0])}, ${k(m[1])}, ${k(m[2])}, ${Number(m[3]).toFixed(2)})`
-        : `rgb(${k(m[0])}, ${k(m[1])}, ${k(m[2])})`;
-};
-const yaz = (s, ad, ham) => {
-    const deger = ad === '--kar-goster' ? ham : kademele(ham);
+const yaz = (ad, deger) => {
     if (yazilan[ad] === deger) return;
     yazilan[ad] = deger;
-    s.setProperty(ad, deger);
+    document.documentElement.style.setProperty(ad, deger);
+};
+const sayfaRenkleri = (p) => {
+    yaz('--zemin', p.zemin);
+    yaz('--vurgu', p.vurgu);
+    yaz('--isik', p.isik);
+};
+const yaziRenkleri = (p) => {
+    yaz('--yazi', p.yazi);
+    yaz('--soluk', p.soluk);
+    yaz('--sinyal', p.sinyal);
 };
 
-export function uygula() {
-    const s = kok();
-    yaz(s, '--zemin', renk.zemin);
-    yaz(s, '--yazi', renk.yazi);
-    yaz(s, '--soluk', renk.soluk);
-    yaz(s, '--vurgu', renk.vurgu);
-    yaz(s, '--sinyal', renk.sinyal);
-    yaz(s, '--isik', renk.isik);
+// Öğeye özel değişkenler (yalnızca o öğe yeniden hesaplanır)
+const ogeYaz = (el, ad, deger) => {
+    if (!el || el.__son?.[ad] === deger) return;
+    el.__son = { ...(el.__son || {}), [ad]: deger };
+    el.style.setProperty(ad, deger);
+};
+let karOgeleri = [];
+let atmosfer = null;
+const dokulariGuncelle = () => {
     // Karlı zemin dokusu yalnızca açık zeminde görünür: parlaklık arttıkça belirginleşir.
-    const p = parlaklik(renk.zemin);
-    yaz(s, '--kar-goster', Math.max(0, Math.min(1, (p - 0.3) / 0.35)).toFixed(2));
-}
+    const g = Math.max(0, Math.min(1, (parlaklik(renk.zemin) - 0.3) / 0.35)).toFixed(2);
+    karOgeleri.forEach((el) => ogeYaz(el, '--kar-goster', g));
+    if (atmosfer) ogeYaz(atmosfer, '--isik', renk.isik);
+};
 
+// Geriye uyumluluk: tüm renkleri bir kerede uygular (açılışta)
+export function uygula() {
+    sayfaRenkleri(renk);
+    yaziRenkleri(renk);
+    dokulariGuncelle();
+}
 
 const sec = (p, alanlar) => Object.fromEntries(alanlar.map((a) => [a, p[a]]));
 
@@ -76,25 +86,53 @@ export function renkYolculugu() {
     const tetikler = [];
     let onceki = PALET[bolumler[0]?.dataset.renk] || PALET.komur;
     Object.assign(renk, onceki);
+
+    karOgeleri = [...document.querySelectorAll('.kar-zemin, .kar-sis')];
+    const atm = document.querySelector('.atmosfer');
+    atmosfer = atm && getComputedStyle(atm).display !== 'none' ? atm : null;
+
+    // Zemin katmanları: en altta ilk paletin rengi, üstünde her geçişin hedef rengi (saydamlığı 0..1)
+    const kap = document.createElement('div');
+    kap.className = 'renk-katmanlar';
+    kap.setAttribute('aria-hidden', 'true');
+    const katman = (r, op) => {
+        const d = document.createElement('div');
+        d.className = 'renk-katman';
+        d.style.background = r;
+        d.style.opacity = op;
+        kap.appendChild(d);
+        return d;
+    };
+    katman(onceki.zemin, '1');
+    document.body.prepend(kap);
     uygula();
 
     bolumler.slice(1).forEach((el) => {
         const hedef = PALET[el.dataset.renk];
         if (!hedef || hedef === onceki) return;
-        const ters = Math.abs(parlaklik(onceki.zemin) - parlaklik(hedef.zemin)) > 0.4;
+        const kaynak = onceki;
+        const ters = Math.abs(parlaklik(kaynak.zemin) - parlaklik(hedef.zemin)) > 0.4;
+        const k = katman(hedef.zemin, '0');
+        let sonOp = '';
 
-        tetikler.push(gsap.fromTo(renk, sec(onceki, ZEMIN_ALANLARI), {
+        tetikler.push(gsap.fromTo(renk, sec(kaynak, ZEMIN_ALANLARI), {
             ...sec(hedef, ZEMIN_ALANLARI),
             ease: 'none',
             immediateRender: false,
-            onUpdate: uygula,
+            onUpdate() {
+                const p = this.progress();
+                const op = p.toFixed(3);
+                if (op !== sonOp) { k.style.opacity = op; sonOp = op; }
+                sayfaRenkleri(p >= 0.5 ? hedef : kaynak);
+                dokulariGuncelle();
+            },
             scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 15%', scrub: true },
         }));
-        tetikler.push(gsap.fromTo(renk, sec(onceki, YAZI_ALANLARI), {
+        tetikler.push(gsap.fromTo(renk, sec(kaynak, YAZI_ALANLARI), {
             ...sec(hedef, YAZI_ALANLARI),
             ease: 'none',
             immediateRender: false,
-            onUpdate: uygula,
+            onUpdate() { yaziRenkleri(this.progress() >= 0.5 ? hedef : kaynak); },
             scrollTrigger: ters
                 ? { trigger: el, start: 'top 58%', end: 'top 46%', scrub: true }
                 : { trigger: el, start: 'top 95%', end: 'top 15%', scrub: true },
@@ -103,5 +141,8 @@ export function renkYolculugu() {
     });
 
     ScrollTrigger.refresh();
-    return () => tetikler.forEach((t) => { t.scrollTrigger?.kill(); t.kill(); });
+    return () => {
+        tetikler.forEach((t) => { t.scrollTrigger?.kill(); t.kill(); });
+        kap.remove();
+    };
 }

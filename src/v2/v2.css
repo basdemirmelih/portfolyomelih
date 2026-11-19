@@ -981,3 +981,8 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     .sahne-alan h3 { font-size: clamp(2.2rem, 3.9vw, 3.7rem); }
     .sahne-alan p { max-width: 42ch; font-size: 1.08rem; line-height: 1.55; }
 }
+
+/* Renk yolculuğunun zemin katmanları (renk.js): her palet sabit bir katman; geçişte yalnızca saydamlık
+   değişir (ekran kartında birleştirilir, sayfa yeniden boyanmaz). İçeriğin ve dokuların en altında durur. */
+.renk-katmanlar { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.renk-katman { position: absolute; inset: 0; will-change: opacity; }
