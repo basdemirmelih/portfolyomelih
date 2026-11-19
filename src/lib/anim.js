@@ -17,9 +17,19 @@ export const hareketAzalt = () =>
 
 export function git(hedef) {
     const el = typeof hedef === 'string' ? document.querySelector(hedef) : hedef;
-    if (kaydirici.lenis) kaydirici.lenis.scrollTo(el ?? 0, { duration: 1.4 });
-    else if (el) el.scrollIntoView({ behavior: hareketAzalt() ? 'auto' : 'smooth' });
-    else window.scrollTo(0, 0);
+    if (kaydirici.lenis) { kaydirici.lenis.scrollTo(el ?? 0, { duration: 1.4 }); return; }
+    // Dokunmatikte (Lenis yok, kaydırma normalizeScroll ile JavaScript tarafında) tarayıcının yumuşak
+    // kaydırması çalışmaz; aynı süre ve eğriyle GSAP ile kaydırılır.
+    const hedefY = el ? el.getBoundingClientRect().top + window.scrollY : 0;
+    if (hareketAzalt()) { window.scrollTo(0, hedefY); return; }
+    const konum = { y: window.scrollY };
+    gsap.to(konum, {
+        y: hedefY,
+        duration: 1.4,
+        ease: 'power3.inOut',
+        overwrite: true,
+        onUpdate: () => window.scrollTo(0, konum.y),
+    });
 }
 
 export { gsap, ScrollTrigger, useGSAP };

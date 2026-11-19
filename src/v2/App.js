@@ -18,6 +18,14 @@ function App() {
     // Akıcı kaydırma; GSAP ile aynı saatte çalışır.
     useEffect(() => {
         if (azalt) return undefined;
+        // Dokunmatik cihazlar: tarayıcı kaydırmayı kendi iş parçacığında yapar; sabitlenen bölüm ve
+        // parçacık tuvali JavaScript'te birkaç kare geriden gelir, bu da takılma/donma gibi görünür.
+        // normalizeScroll kaydırmayı JavaScript tarafına alır: sayfa, sabit bölüm ve parçacıklar aynı karede
+        // hareket eder, adres çubuğu da kaydırırken zıplamaz. Lenis burada kullanılmaz (dokunmada işi yok).
+        if (window.matchMedia('(pointer: coarse)').matches) {
+            const norm = ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
+            return () => { norm?.kill?.(); ScrollTrigger.normalizeScroll(false); };
+        }
         const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
         kaydirici.lenis = lenis;
         lenis.scrollTo(0, { immediate: true, force: true });

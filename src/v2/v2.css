@@ -967,7 +967,7 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     .askilar-sira > ul {
         scroll-snap-type: x proximity;
         overscroll-behavior-x: contain;
-        touch-action: pan-x pan-y;
+        touch-action: pan-x; /* dikey sürükleme sayfaya (normalizeScroll) geçer */
         -webkit-overflow-scrolling: touch;
     }
     .aski { will-change: auto; transform: none; }
