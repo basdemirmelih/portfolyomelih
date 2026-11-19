@@ -43,7 +43,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     // Zayıf telefonlarda (az çekirdek ya da az bellek) daha da az parçacık; parçacıklar biraz iri çizilir,
     // şekil aynı görünür. Güçlü telefonlar etkilenmez.
     const zayif = mobil && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 3);
-    const ADET = mobil ? (zayif ? 6000 : 8000) : 30000;
+    const ADET = mobil ? (zayif ? 8000 : 12000) : 30000;
     // Nokta bulutunda 1.5 üstü çözünürlük gözle fark edilmez ama GPU yükünü ikiye katlar.
     const dpr = Math.min(window.devicePixelRatio || 1, mobil ? 1 : 1.5);
     renderer.setPixelRatio(dpr);
@@ -59,22 +59,6 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
     const onbellek = {};
     const sekil = (anahtar) => onbellek[anahtar] || null;
     onbellek[0] = ornekle(SEKILLER[0], ADET);
-    // Telefon: ad parçacığa dönüşmez; kalkan, yetenekler bölümüne girilince dağınık bir buluttan toplanır.
-    // Bu toplanma kaydırmaya değil zamana bağlıdır (sayfanın hareketinden geri kalmaz).
-    if (mobil) {
-        const konum = new Float32Array(ADET * 3);
-        const normal = new Float32Array(ADET * 3);
-        const v = new THREE.Vector3();
-        for (let i = 0; i < ADET; i += 1) {
-            v.randomDirection().multiplyScalar(1.1 + Math.sqrt(Math.random()) * 1.9);
-            v.y *= 0.85;
-            v.toArray(konum, i * 3);
-            v.randomDirection().toArray(normal, i * 3);
-        }
-        onbellek.bulut = { konum, normal };
-    }
-    const toplanma = { durum: 'bekliyor', t0: 0 };
-    const TOPLANMA_SURE = 1.15;
     // requestIdleCallback olmayan tarayıcılarda (iOS Safari) hazırlık, kaydırma durunca yapılır;
     // aksi halde şekil hazırlanırken kaydırma takılırdı.
     let sonKaydirma = 0;
@@ -186,7 +170,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         u.uFogNear.value = z - 1.6;
         u.uFogFar.value = z + 9;
         const pikselBirim = (H * dpr) / (2 * yarimTan);
-        u.uSize.value = (dar ? (zayif ? 0.052 : 0.046) : 0.031) * pikselBirim; // telefonda daha az ama biraz daha iri parçacık
+        u.uSize.value = (dar ? (zayif ? 0.046 : 0.041) : 0.031) * pikselBirim; // telefonda daha az ama biraz daha iri parçacık
         u.uRadius.value = dar ? 0.9 : 1.15;
         isimGecersiz = true;
     };
@@ -278,10 +262,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         let isimOpaklik = 1;
 
         if (k.sahne <= 0 && mobil) {
-            // A-telefon) Girişte parçacık yok (ad, sayfanın kendisiyle maskeli kayarak çıkar). Yukarı dönülürse
-            // bir sonraki girişte kalkan yine buluttan toplanır.
+            // A-telefon) Girişte parçacık yok: ad sayfayla birlikte normal kayar, kalkan yetenekler bölümünde hazır.
             opaklik = 0;
-            if (k.giris < 0.85) toplanma.durum = 'bekliyor';
         } else if (k.sahne <= 0) {
             // A) Giriş: isim dağılıp kalkana akar. İsim sayfayla birlikte yukarı kayar.
             if (k.giris > 0.005 && (isimGecersiz || !onbellek.isim)) {
@@ -302,14 +284,7 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         } else if (k.sahne < 1) {
             // B) Sabit sahne: şekiller sırayla birbirine dönüşür
             const dz = sahneDurumu(k.sahne);
-            if (mobil && toplanma.durum === 'bekliyor') { toplanma.durum = 'suruyor'; toplanma.t0 = t; }
-            const g = (t - toplanma.t0) / TOPLANMA_SURE;
-            if (mobil && toplanma.durum === 'suruyor' && (g >= 1 || dz.a !== 0 || dz.ilerleme > 0)) toplanma.durum = 'bitti';
-            if (mobil && toplanma.durum === 'suruyor' && ciftYukle('bulut', 0)) {
-                // Buluttan kalkana: dalga halinde, yumuşak toplanma; parçacıklar belirerek gelir
-                ilerleme = egri(sinirla(g));
-                opaklik = sinirla(g * 3);
-            } else if (ciftYukle(dz.a, dz.b)) ilerleme = dz.ilerleme;
+            if (ciftYukle(dz.a, dz.b)) ilerleme = dz.ilerleme;
             // Sonraki şekil henüz hazır değilse (çok hızlı kaydırma) mevcut şekil sabit kalır, takılma olmaz
             else if (ciftYukle(dz.a, dz.a)) ilerleme = 0;
             isimOpaklik = 0;

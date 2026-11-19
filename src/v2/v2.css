@@ -996,7 +996,3 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
 .isim-satir { will-change: opacity; }
 .giris-alt, .giris-dip { will-change: transform, opacity; }
 
-/* Telefon: ad satırları maskeli kayarak çıkar (Hero.js); iç satır kendi katmanında, kırpma satırın kendisinde. */
-@media (pointer: coarse), (max-width: 699px) {
-    .isim .isim-ic { will-change: transform; }
-}
