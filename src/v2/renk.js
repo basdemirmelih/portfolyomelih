@@ -33,7 +33,20 @@ const parlaklik = (deger) => {
 // Kökteki CSS değişkenleri değişince tarayıcı bütün sayfanın stilini yeniden hesaplar.
 // Bu yüzden yalnızca gerçekten değişen değişkenler yazılır.
 const yazilan = {};
-const yaz = (s, ad, deger) => {
+// Telefonda renk geçişi kademeli yazılır (her kanal 4'lük adımlarla): göz farkı görmez ama sayfanın
+// yeniden boyanma sayısı yaklaşık dörtte birine iner; kaydırma sırasında kasmayı azaltır.
+const ADIM = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 860px)').matches ? 4 : 1;
+const kademele = (deger) => {
+    if (ADIM === 1 || deger[0] === '#') return deger;
+    const m = deger.match(/[\d.]+/g);
+    if (!m || m.length < 3) return deger;
+    const k = (v) => Math.min(255, Math.round(Number(v) / ADIM) * ADIM);
+    return m.length > 3 && Number(m[3]) < 1
+        ? `rgba(${k(m[0])}, ${k(m[1])}, ${k(m[2])}, ${Number(m[3]).toFixed(2)})`
+        : `rgb(${k(m[0])}, ${k(m[1])}, ${k(m[2])})`;
+};
+const yaz = (s, ad, ham) => {
+    const deger = ad === '--kar-goster' ? ham : kademele(ham);
     if (yazilan[ad] === deger) return;
     yazilan[ad] = deger;
     s.setProperty(ad, deger);

@@ -60,10 +60,15 @@ const Izgara = () => {
             ctx.putImageData(resim, 0, 0);
         };
 
+        // Telefonda saniyede ~15 kare yeter; sayfa kaydırılırken hiç çizilmez (kaydırma akıcı kalsın)
+        const aralik = window.matchMedia('(max-width: 860px)').matches ? 66 : 33;
+        let sonKaydirma = 0;
+        const kaydirildi = () => { sonKaydirma = performance.now(); };
+        window.addEventListener('scroll', kaydirildi, { passive: true });
         let raf = 0; let son = 0; const bas = performance.now();
         const dongu = (simdi) => {
             raf = requestAnimationFrame(dongu);
-            if (simdi - son < 33) return; // ~30 kare/sn
+            if (simdi - son < aralik || simdi - sonKaydirma < 140) return;
             son = simdi;
             // Mees 4.8 rad/sn (1,3 sn'lik döngü); koyu zeminde daha sakin dursun diye yarı hızda (~2,6 sn)
             ciz(((simdi - bas) / 1000) * 2.4);
@@ -98,6 +103,7 @@ const Izgara = () => {
 
         return () => {
             cancelAnimationFrame(raf);
+            window.removeEventListener('scroll', kaydirildi);
             gozlemci.disconnect();
             if (ro) ro.disconnect(); else window.removeEventListener('resize', yeniden);
             ScrollTrigger.removeEventListener('refresh', yeniden);

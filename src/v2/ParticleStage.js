@@ -70,9 +70,14 @@ const ParticleStage = ({ fontlarHazir }) => {
         const isim = document.querySelector('.isim');
         let sonIsimOpaklik = -1;
 
+        // Giriş bölümünün yüksekliği her karede ölçülmez (her ölçüm, renk geçişi sırasında tarayıcıyı
+        // sayfa düzenini yeniden hesaplamaya zorluyordu); yalnızca boyut değişince güncellenir.
+        let girisYuk = giris ? giris.offsetHeight : window.innerHeight;
+        const girisOlc = () => { girisYuk = giris ? giris.offsetHeight : window.innerHeight; };
+        ScrollTrigger.addEventListener('refresh', girisOlc);
+
         const kaydirma = () => {
             const y = window.scrollY;
-            const girisYuk = giris ? giris.offsetHeight : window.innerHeight;
             const sahne = tetik ? tetik.progress : 0;
             const sonrasi = tetik ? Math.max(0, y - tetik.end) : 0;
             return {
@@ -101,6 +106,7 @@ const ParticleStage = ({ fontlarHazir }) => {
             iptal = true;
             motor.current?.yokEt();
             motor.current = null;
+            ScrollTrigger.removeEventListener('refresh', girisOlc);
             tetik?.kill(true); // sabitlemeyi geri al: bölüm DOM'daki yerine döner
             if (isim) { isim.style.opacity = ''; }
         };

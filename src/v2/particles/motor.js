@@ -19,6 +19,9 @@ export function sahneDurumu(q) {
 }
 
 function renkOku(hedef, deger) {
+    // Renk değişmediyse her karede yeniden ayrıştırılmaz
+    if (hedef.userData === deger) return;
+    hedef.userData = deger;
     // GSAP renkleri "rgba(r, g, b, a)" ya da "#rrggbb" olarak verir.
     if (deger[0] === '#') { hedef.set(deger); return; }
     const s = deger.match(/[\d.]+/g);
@@ -55,7 +58,17 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         return onbellek[anahtar];
     };
     sekil(0);
-    const bosta = window.requestIdleCallback || ((f) => setTimeout(f, 300));
+    // requestIdleCallback olmayan tarayıcılarda (iOS Safari) hazırlık, kaydırma durunca yapılır;
+    // aksi halde şekil hazırlanırken kaydırma takılırdı.
+    let sonKaydirma = 0;
+    const kaydirildi = () => { sonKaydirma = performance.now(); };
+    window.addEventListener('scroll', kaydirildi, { passive: true });
+    const bosta = window.requestIdleCallback
+        ? (f) => window.requestIdleCallback(f, { timeout: 1500 })
+        : (f) => {
+            const dene = () => (performance.now() - sonKaydirma < 250 ? setTimeout(dene, 200) : f());
+            setTimeout(dene, 250);
+        };
     let iptal = false;
     // Kalan şekiller sırayla, tarayıcı boştayken hazırlanır.
     const sonrakiniHazirla = (i) => {
@@ -150,12 +163,26 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         isimGecersiz = true;
     };
     boyutla();
+    // Ad, kaydırma başlamadan (boştayken) örneklenir: ilk kaydırmada tuvali okumak telefonda takılıyordu.
+    const isimHazirla = () => bosta(() => {
+        if (iptal || !isimGecersiz) return;
+        const o = isimOrnekle(ADET, gorunur);
+        if (o) {
+            onbellek.isim = o; isimGecersiz = false; ciftAnahtar = '';
+            // Isınma: ilk şekil çifti şimdi GPU'ya yüklenir ve bir kez (görünmez) çizilir;
+            // böylece ilk kaydırmada bu yükleme yüzünden bir kare takılmaz.
+            if (window.scrollY < 5 && ciftYukle('isim', 0)) renderer.render(sahne, kamera);
+        }
+    });
+    // Girişteki harf animasyonu (~2,1 sn) bitmeden örneklenmez; yoksa harfler yolda ölçülürdü.
+    const isimZamanlayici = setTimeout(isimHazirla, 2600);
     // Adres çubuğu yüzünden yalnızca yükseklik biraz değiştiyse (telefon) yeniden kurulmaz; şekiller zıplamaz.
     const yenidenBoyutla = () => {
         const yeniW = kap.clientWidth;
         const yeniH = kap.clientHeight;
         if (mobil && yeniW === W && Math.abs(yeniH - H) < 180) return;
         boyutla();
+        isimHazirla();
     };
     window.addEventListener('resize', yenidenBoyutla);
 
@@ -194,6 +221,12 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         raf = requestAnimationFrame(kare);
         const k = kaydirma();
         const t = saat.getElapsedTime();
+        // Sahne bitti ve şekil tamamen söndü: bu karede yapılacak iş yok
+        if (k.sahne >= 1 && k.sonrasi > H * 0.6) {
+            if (gorunurlukSon !== 0) { kap.style.opacity = '0'; gorunurlukSon = 0; }
+            k.isimOpaklik(0);
+            return;
+        }
         const wpp = gorunur.h / H; // bir pikselin dünya birimi
 
         // Renkler sayfanın renk yolculuğunu izler
@@ -265,8 +298,10 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         isimiYenile: () => { isimGecersiz = true; },
         yokEt: () => {
             iptal = true;
+            clearTimeout(isimZamanlayici);
             cancelAnimationFrame(raf);
             window.removeEventListener('resize', yenidenBoyutla);
+            window.removeEventListener('scroll', kaydirildi);
             window.removeEventListener('pointermove', fareHareket);
             document.documentElement.removeEventListener('pointerleave', fareCik);
             window.removeEventListener('blur', fareCik);

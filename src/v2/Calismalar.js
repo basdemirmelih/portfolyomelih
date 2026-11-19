@@ -102,7 +102,17 @@ const Calismalar = () => {
 
     useEffect(() => {
         const d0 = durum.current;
-        if (azalt) d0.forEach((d) => { d.y = 0; d.indi = true; });
+        // Telefonda (dokunmatik/dar ekran) kartlar düşmez ve sallanmaz: yerlerinde sabit asılı durur.
+        // Kaydırma sırasında her karede dönüşüm yazmak hem kasma yapıyordu hem de yana kaydırmayı bozuyordu.
+        const sabit = azalt || window.matchMedia('(pointer: coarse), (max-width: 860px)').matches;
+        if (sabit) {
+            d0.forEach((d, i) => {
+                d.y = 0; d.indi = true;
+                const el = askilar.current[i];
+                if (el) { el.style.transform = ''; el.style.opacity = '1'; }
+            });
+            return undefined;
+        }
 
         let gorunur = false;
         const gozlemci = new IntersectionObserver(([g]) => { gorunur = g.isIntersecting; }, { rootMargin: '200px' });

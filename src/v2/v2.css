@@ -958,3 +958,18 @@ main > section:not(.giris), .sahne-sarmal, .sahne { position: relative; z-index:
     .kanal-deger { font-size: 1rem; }
     .alt-satir { margin-top: 2rem; }
 }
+
+/* Telefon: kart sırası. Yana kaydırma sayfanın aşağı kaydırmasıyla çakışmasın:
+   - yatay kayma kendi içinde kalır (sayfaya taşmaz), dikey kaydırma her zaman sayfaya geçer,
+   - kartlar "zorla" değil, yakınsa ortaya oturur (mandatory yerine proximity),
+   - kartlar sabit asılı olduğu için sürekli değişen dönüşüm katmanına gerek yok. */
+@media (max-width: 860px) {
+    .askilar-sira > ul {
+        scroll-snap-type: x proximity;
+        overscroll-behavior-x: contain;
+        touch-action: pan-x pan-y;
+        -webkit-overflow-scrolling: touch;
+    }
+    .aski { will-change: auto; transform: none; }
+    .rozet { transition: none; }
+}
