@@ -15,6 +15,8 @@ uniform float uFromRot;
 uniform float uToRot;
 uniform float uDonus;
 uniform vec2 uMouse;
+uniform vec2 uIz;
+uniform float uAkis;
 uniform float uPush;
 uniform float uRadius;
 uniform float uFogNear;
@@ -53,12 +55,22 @@ void main() {
     // Duran şekilde hafif kıpırtı
     pos += n * 0.016 * sin(uTime * 1.6 + aRand * 60.0);
 
-    // Fare: imlecin çevresindeki parçacıklar dışarı savrulur.
-    vec2 d = pos.xy - uMouse;
+    // Fare / dokunuş: suda iz gibi. Etki alanı imleç ile peşinden gelen iz noktası arasındaki kısa bir
+    // çizgidir (hızlı hareket edince uzar). Her parçacığın sınırı ve yönü biraz farklı: kenar organik olur.
+    vec2 yol = uMouse - uIz;
+    float yolUz = dot(yol, yol);
+    float t = yolUz > 1e-5 ? clamp(dot(pos.xy - uIz, yol) / yolUz, 0.0, 1.0) : 1.0;
+    vec2 yakin = uIz + yol * t;
+    vec2 d = pos.xy - yakin;
     float uzak = length(d);
-    float f = smoothstep(uRadius, 0.0, uzak) * uPush;
-    pos.xy += normalize(d + 0.0001) * f * (0.45 + aRand * 1.1);
-    pos.z += f * (aRand - 0.5) * 2.2;
+    float sinir = uRadius * (0.62 + aRand * 0.5);
+    float f = smoothstep(sinir, 0.0, uzak) * uPush;
+    f *= f * (3.0 - 2.0 * f); // yumuşak eşik
+    vec2 dis = normalize(d + 0.0001);
+    dis = rot((aRand - 0.5) * 1.3) * dis;                 // dağınık yön
+    vec2 akis = yolUz > 1e-5 ? yol / sqrt(yolUz) : vec2(0.0);
+    pos.xy += dis * f * (0.26 + aRand * 0.62) + akis * f * uAkis * (0.22 + aRand * 0.45);
+    pos.z += f * (aRand - 0.5) * 1.6;
 
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
@@ -67,7 +79,7 @@ void main() {
 
     vec3 nv = normalize(normalMatrix * n);
     float isik = clamp(dot(nv, normalize(vec3(-0.35, 0.55, 0.75))), 0.0, 1.0);
-    vLight = 0.28 + isik * 0.78 + ucus * 0.45 + f * 0.5;
+    vLight = 0.28 + isik * 0.78 + ucus * 0.45 + f * 0.35;
     vFog = smoothstep(uFogNear, uFogFar, -mv.z);
     vAccent = step(0.993, aRand);
 }

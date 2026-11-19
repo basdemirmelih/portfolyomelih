@@ -88,7 +88,12 @@ const Hero = () => {
             <div className="giris-gorsel">
                 <div className="giris-gorsel-ic">
                     <picture>
-                        <source srcSet="/images/melih-portre.webp" type="image/webp" />
+                        {/* Ekran boyu ve piksel yoğunluğuna göre uygun boy indirilir (görselin ekranda kapladığı alana göre) */}
+                        <source
+                            srcSet="/images/melih-portre-800.webp 800w, /images/melih-portre-1200.webp 1200w, /images/melih-portre.webp 1600w"
+                            sizes="(max-width: 860px) 130vw, 58vw"
+                            type="image/webp"
+                        />
                         <img
                             src="/images/melih-portre.jpg"
                             alt="Melih Başdemir’in portresi: yüzünün bir yarısı devre kartı ve kod ekranlarına dönüşen dijital illüstrasyon"

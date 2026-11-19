@@ -61,12 +61,16 @@ const ogeYaz = (el, ad, deger) => {
     el.style.setProperty(ad, deger);
 };
 let karOgeleri = [];
-let atmosfer = null;
 const dokulariGuncelle = () => {
     // Karlı zemin dokusu yalnızca açık zeminde görünür: parlaklık arttıkça belirginleşir.
     const g = Math.max(0, Math.min(1, (parlaklik(renk.zemin) - 0.3) / 0.35)).toFixed(2);
-    karOgeleri.forEach((el) => ogeYaz(el, '--kar-goster', g));
-    if (atmosfer) ogeYaz(atmosfer, '--isik', renk.isik);
+    karOgeleri.forEach((el) => {
+        ogeYaz(el, '--kar-goster', g);
+        // Koyu bölümlerde kar katmanları tamamen kapatılır: ekran kartı onları hiç birleştirmez
+        const v = g === '0.00' ? 'hidden' : 'visible';
+        if (el.style.visibility !== v) el.style.visibility = v;
+    });
+    // (Arka plan ışığı artık zemin katmanlarının içinde; her karede boyanmıyor.)
 };
 
 // Geriye uyumluluk: tüm renkleri bir kerede uygular (açılışta)
@@ -88,23 +92,46 @@ export function renkYolculugu() {
     Object.assign(renk, onceki);
 
     karOgeleri = [...document.querySelectorAll('.kar-zemin, .kar-sis')];
+    // Masaüstünde arka plandaki yumuşak ışık, her paletin kendi katmanına çizilir (aşağıda); ayrı ışık öğesi
+    // (.atmosfer) gizlenir. Böylece renk geçişinde ekran boyu degrade her karede yeniden boyanmaz.
     const atm = document.querySelector('.atmosfer');
-    atmosfer = atm && getComputedStyle(atm).display !== 'none' ? atm : null;
+    const isikVar = !!atm && getComputedStyle(atm).display !== 'none';
+    if (atm) atm.style.display = 'none';
 
     // Zemin katmanları: en altta ilk paletin rengi, üstünde her geçişin hedef rengi (saydamlığı 0..1)
     const kap = document.createElement('div');
     kap.className = 'renk-katmanlar';
     kap.setAttribute('aria-hidden', 'true');
-    const katman = (r, op) => {
+    const katman = (p, op) => {
         const d = document.createElement('div');
         d.className = 'renk-katman';
-        d.style.background = r;
+        d.style.background = isikVar
+            ? `radial-gradient(40% 34% at 22% 22%, color-mix(in srgb, ${p.isik} 70%, transparent), transparent 72%),
+               radial-gradient(44% 40% at 82% 78%, color-mix(in srgb, ${p.isik} 45%, transparent), transparent 72%),
+               ${p.zemin}`
+            : p.zemin;
         d.style.opacity = op;
         kap.appendChild(d);
+        katmanListesi.push(d);
         return d;
     };
-    katman(onceki.zemin, '1');
+    // Ekran kartı gereksiz çizim yapmasın: tamamen saydam katmanlar ve üstündeki tam opak bir katmanın
+    // örttüğü katmanlar gizlenir (görüntü aynı kalır).
+    const katmanListesi = [];
+    const gorunurlukleriGuncelle = () => {
+        let ortulu = false;
+        for (let i = katmanListesi.length - 1; i >= 0; i -= 1) {
+            const d = katmanListesi[i];
+            const op = Number(d.style.opacity);
+            const gizli = ortulu || op <= 0;
+            const v = gizli ? 'hidden' : 'visible';
+            if (d.style.visibility !== v) d.style.visibility = v;
+            if (op >= 1) ortulu = true;
+        }
+    };
+    katman(onceki, '1');
     document.body.prepend(kap);
+    gorunurlukleriGuncelle();
     uygula();
 
     bolumler.slice(1).forEach((el) => {
@@ -112,37 +139,46 @@ export function renkYolculugu() {
         if (!hedef || hedef === onceki) return;
         const kaynak = onceki;
         const ters = Math.abs(parlaklik(kaynak.zemin) - parlaklik(hedef.zemin)) > 0.4;
-        const k = katman(hedef.zemin, '0');
+        const k = katman(hedef, '0');
         let sonOp = '';
 
+        // Açıktan koyuya geçiş daha uzun bir aralığa yayılır: koyulaşma göze daha sert gelir.
+        const koyulasma = parlaklik(hedef.zemin) < parlaklik(kaynak.zemin) - 0.4;
         tetikler.push(gsap.fromTo(renk, sec(kaynak, ZEMIN_ALANLARI), {
             ...sec(hedef, ZEMIN_ALANLARI),
-            ease: 'none',
+            // Yumuşak giriş-çıkış eğrisi: renk birden kararmaz/açılmaz, başta ve sonda yavaşlar
+            ease: 'sine.inOut',
             immediateRender: false,
             onUpdate() {
-                const p = this.progress();
-                const op = p.toFixed(3);
-                if (op !== sonOp) { k.style.opacity = op; sonOp = op; }
-                sayfaRenkleri(p >= 0.5 ? hedef : kaynak);
+                const op = this.ratio.toFixed(3);
+                if (op !== sonOp) { k.style.opacity = op; sonOp = op; gorunurlukleriGuncelle(); }
+                sayfaRenkleri(this.ratio >= 0.5 ? hedef : kaynak);
                 dokulariGuncelle();
             },
-            scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 15%', scrub: true },
+            // scrub: 0.6 -> renk kaydırmayı yarım saniyelik bir gecikmeyle, pürüzsüzce izler
+            // (telefonda dokunmatik kaydırmanın kesik kesik gelen adımları yumuşar)
+            scrollTrigger: koyulasma
+                ? { trigger: el, start: 'top bottom', end: 'top 5%', scrub: 0.6 }
+                : { trigger: el, start: 'top 95%', end: 'top 15%', scrub: 0.6 },
         }));
         tetikler.push(gsap.fromTo(renk, sec(kaynak, YAZI_ALANLARI), {
             ...sec(hedef, YAZI_ALANLARI),
             ease: 'none',
             immediateRender: false,
             onUpdate() { yaziRenkleri(this.progress() >= 0.5 ? hedef : kaynak); },
+            // Yazı rengi, zemin ara tondayken döner (zemin de 0,6 sn gecikmeyle geldiği için aynı gecikme)
             scrollTrigger: ters
-                ? { trigger: el, start: 'top 58%', end: 'top 46%', scrub: true }
+                ? { trigger: el, start: koyulasma ? 'top 56%' : 'top 58%', end: koyulasma ? 'top 46%' : 'top 46%', scrub: 0.6 }
                 : { trigger: el, start: 'top 95%', end: 'top 15%', scrub: true },
         }));
         onceki = hedef;
     });
+    gorunurlukleriGuncelle(); // başlangıçta saydam katmanlar gizli
 
     ScrollTrigger.refresh();
     return () => {
         tetikler.forEach((t) => { t.scrollTrigger?.kill(); t.kill(); });
         kap.remove();
+        if (atm) atm.style.display = '';
     };
 }

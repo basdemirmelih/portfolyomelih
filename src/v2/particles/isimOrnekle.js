@@ -8,20 +8,28 @@ export function isimOrnekle(adet, gorunur) {
     const W = window.innerWidth;
     const H = window.innerHeight;
     const olcek = 0.5;
+    const sy = window.scrollY;
+    // Tuval yalnızca adın kapladığı şerit kadar: bütün ekranı çizip taramak telefonda yavaştı.
+    const kutular = harfler.map((h) => h.getBoundingClientRect());
+    const pay = 40;
+    const x0 = Math.max(0, Math.min(...kutular.map((k) => k.left)) - pay);
+    const y0 = Math.min(...kutular.map((k) => k.top)) + sy - pay;
+    const x1 = Math.min(W, Math.max(...kutular.map((k) => k.right)) + pay);
+    const y1 = Math.max(...kutular.map((k) => k.bottom)) + sy + pay;
     const tuval = document.createElement('canvas');
-    tuval.width = Math.ceil(W * olcek);
-    tuval.height = Math.ceil(H * 1.2 * olcek);
+    tuval.width = Math.max(1, Math.ceil((x1 - x0) * olcek));
+    tuval.height = Math.max(1, Math.ceil((y1 - y0) * olcek));
     const ctx = tuval.getContext('2d', { willReadFrequently: true });
     if (!ctx) return null;
     ctx.scale(olcek, olcek);
+    ctx.translate(-x0, -y0);
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
     if ('fontStretch' in ctx) ctx.fontStretch = 'expanded';
 
-    const sy = window.scrollY;
-    harfler.forEach((h) => {
-        const r = h.getBoundingClientRect();
+    harfler.forEach((h, hi) => {
+        const r = kutular[hi];
         const stil = getComputedStyle(h);
         const boyut = parseFloat(stil.fontSize);
         // Kutunun üst dolgusu (İ noktası için) hesaba katılmaz: yalnızca harfin kendi alanı
@@ -49,10 +57,9 @@ export function isimOrnekle(adet, gorunur) {
 
     const veri = ctx.getImageData(0, 0, tuval.width, tuval.height).data;
     const dolu = [];
-    for (let y = 0; y < tuval.height; y += 1) {
-        for (let x = 0; x < tuval.width; x += 1) {
-            if (veri[(y * tuval.width + x) * 4 + 3] > 140) dolu.push(x, y);
-        }
+    const tw = tuval.width;
+    for (let i = 3, n = veri.length; i < n; i += 4) {
+        if (veri[i] > 140) { const p = (i - 3) >> 2; dolu.push(p % tw, (p / tw) | 0); }
     }
     if (!dolu.length) return null;
 
@@ -61,8 +68,8 @@ export function isimOrnekle(adet, gorunur) {
     const toplam = dolu.length / 2;
     for (let i = 0; i < adet; i += 1) {
         const k = ((Math.random() * toplam) | 0) * 2;
-        const ex = (dolu[k] + Math.random()) / olcek;
-        const ey = (dolu[k + 1] + Math.random()) / olcek;
+        const ex = (dolu[k] + Math.random()) / olcek + x0;
+        const ey = (dolu[k + 1] + Math.random()) / olcek + y0;
         konum[i * 3] = (ex / W - 0.5) * gorunur.w;
         konum[i * 3 + 1] = -(ey / H - 0.5) * gorunur.h;
         konum[i * 3 + 2] = (Math.random() - 0.5) * 0.12;

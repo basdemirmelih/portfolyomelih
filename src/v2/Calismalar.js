@@ -173,18 +173,22 @@ const Calismalar = () => {
     // Olaylar dönmeyen askı kutusunda dinlenir: kart dönerken bir an incelir ve imleç
     // "karttan çıkmış" sayılırsa geri dönüp titrerdi.
     const rozetEl = (e) => e.currentTarget.querySelector('.rozet');
+    // Fareyle üzerine gelme yalnızca gerçekten fare kullanılan cihazlarda; dokunmatikte kart yalnızca
+    // dokununca döner. (Bazı telefon tarayıcıları dokunuşu "fare" olarak bildirdiği için olay türüne
+    // değil, cihazın kendisine bakılır.)
+    const fareli = typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const askiOlaylari = (i) => ({
-        onPointerEnter: (e) => { if (e.pointerType === 'mouse') ayarla(i, true); },
+        onPointerEnter: () => { if (fareli) ayarla(i, true); },
         onPointerLeave: (e) => {
             const r = rozetEl(e);
             durum.current[i].hedefAci = 0;
             r.style.setProperty('--ry', '0deg');
             r.style.setProperty('--rx', '0deg');
             r.classList.remove('rozet--egik');
-            if (e.pointerType === 'mouse') ayarla(i, false);
+            if (fareli) ayarla(i, false);
         },
         onPointerMove: (e) => {
-            if (e.pointerType !== 'mouse' || azalt) return;
+            if (!fareli || azalt) return;
             const el = rozetEl(e);
             const r = e.currentTarget.getBoundingClientRect();
             const px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
@@ -198,7 +202,7 @@ const Calismalar = () => {
     });
     const rozetOlaylari = (i) => ({
         // Dokunmatik ve klavye: dokununca / Enter ile çevrilir
-        onClick: (e) => { if (e.nativeEvent.pointerType !== 'mouse') setCevrik((c) => c.map((v, j) => (j === i ? !v : v))); },
+        onClick: () => { if (!fareli) setCevrik((c) => c.map((v, j) => (j === i ? !v : v))); },
         onKeyDown: (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();

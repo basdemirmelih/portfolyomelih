@@ -40,7 +40,10 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         return null;
     }
     // Telefonda daha az parçacık ve düşük piksel yoğunluğu: şekil aynı, işlemci yükü daha az.
-    const ADET = mobil ? 8000 : 30000;
+    // Zayıf telefonlarda (az çekirdek ya da az bellek) daha da az parçacık; parçacıklar biraz iri çizilir,
+    // şekil aynı görünür. Güçlü telefonlar etkilenmez.
+    const zayif = mobil && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 3);
+    const ADET = mobil ? (zayif ? 6000 : 8000) : 30000;
     // Nokta bulutunda 1.5 üstü çözünürlük gözle fark edilmez ama GPU yükünü ikiye katlar.
     const dpr = Math.min(window.devicePixelRatio || 1, mobil ? 1 : 1.5);
     renderer.setPixelRatio(dpr);
@@ -116,6 +119,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         uToRot: { value: 1 },
         uDonus: { value: 0 },
         uMouse: { value: new THREE.Vector2(999, 999) },
+        uIz: { value: new THREE.Vector2(999, 999) },
+        uAkis: { value: 0 },
         uPush: { value: 0 },
         uRadius: { value: 1.1 },
         uFogNear: { value: 9 },
@@ -161,11 +166,11 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         gorunur.h = 2 * z * yarimTan;
         gorunur.w = gorunur.h * kamera.aspect;
         // Masaüstünde şekil sağa yaslanır (solda yazılar var), telefonda üst yarıya çıkar.
-        sekilKaydir = dar ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(gorunur.w * (kamera.aspect > 1.9 ? 0.24 : 0.16), -0.1, 0); // çok geniş ekranda (yatay telefon) daha sağa
+        sekilKaydir = dar ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(gorunur.w * (kamera.aspect > 1.9 ? 0.24 : kamera.aspect < 1.6 ? 0.185 : 0.16), -0.1, 0); // çok geniş ekranda (yatay telefon) ve dar masaüstünde daha sağa (yazıya yer)
         u.uFogNear.value = z - 1.6;
         u.uFogFar.value = z + 9;
         const pikselBirim = (H * dpr) / (2 * yarimTan);
-        u.uSize.value = (dar ? 0.046 : 0.031) * pikselBirim; // telefonda daha az ama biraz daha iri parçacık
+        u.uSize.value = (dar ? (zayif ? 0.052 : 0.046) : 0.031) * pikselBirim; // telefonda daha az ama biraz daha iri parçacık
         u.uRadius.value = dar ? 0.9 : 1.15;
         isimGecersiz = true;
     };
@@ -201,6 +206,12 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         fare.icinde = 1;
     };
     const fareCik = () => { fare.icinde = 0; };
+    // Dokunmatikte parmak kalkınca etki söner
+    const dokunusBitti = (e) => { if (e.pointerType !== 'mouse') fareCik(); };
+    window.addEventListener('pointerup', dokunusBitti, { passive: true });
+    window.addEventListener('pointercancel', dokunusBitti, { passive: true });
+    // İmleç ve iz noktası yumuşakça takip eder (akışkan his)
+    const imlec = { x: 999, y: 999, ix: 999, iy: 999, ilk: true };
     window.addEventListener('pointermove', fareHareket, { passive: true });
     document.documentElement.addEventListener('pointerleave', fareCik);
     window.addEventListener('blur', fareCik);
@@ -290,8 +301,18 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
         // Telefonda salınım daha az: dar ekranda büyük açılar şekli yamultuyordu.
         u.uDonus.value = hareketAzalt ? 0 : Math.sin(t * 0.32) * (dar ? 0.2 : 0.42);
         const hedefItme = hareketAzalt ? 0 : fare.icinde;
-        u.uPush.value += (hedefItme - u.uPush.value) * 0.08;
-        u.uMouse.value.set(fare.x, fare.y);
+        u.uPush.value += (hedefItme * (mobil ? 0.75 : 1) - u.uPush.value) * 0.07;
+        // İmleç çıkıp etki tamamen sönünce, geri geldiğinde iz uzaktan süpürülerek gelmesin
+        if (!fare.icinde && u.uPush.value < 0.02) imlec.ilk = true;
+        if (imlec.ilk && fare.icinde) { imlec.x = imlec.ix = fare.x; imlec.y = imlec.iy = fare.y; imlec.ilk = false; }
+        imlec.x += (fare.x - imlec.x) * 0.22;
+        imlec.y += (fare.y - imlec.y) * 0.22;
+        imlec.ix += (imlec.x - imlec.ix) * 0.07;
+        imlec.iy += (imlec.y - imlec.iy) * 0.07;
+        u.uMouse.value.set(imlec.x, imlec.y);
+        u.uIz.value.set(imlec.ix, imlec.iy);
+        // Akış gücü iz uzunluğuyla artar (hızlı hareket = güçlü sürüklenme), en fazla 1
+        u.uAkis.value = Math.min(1, Math.hypot(imlec.x - imlec.ix, imlec.y - imlec.iy) / (u.uRadius.value * 1.2));
 
         k.isimOpaklik(isimOpaklik);
         if (opaklik !== gorunurlukSon) {
@@ -312,6 +333,8 @@ export function motorKur(kap, { renk, kaydirma, mobil, hareketAzalt }) {
             window.removeEventListener('resize', yenidenBoyutla);
             window.removeEventListener('scroll', kaydirildi);
             window.removeEventListener('pointermove', fareHareket);
+            window.removeEventListener('pointerup', dokunusBitti);
+            window.removeEventListener('pointercancel', dokunusBitti);
             document.documentElement.removeEventListener('pointerleave', fareCik);
             window.removeEventListener('blur', fareCik);
             geo.dispose();

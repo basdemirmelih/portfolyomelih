@@ -49,7 +49,9 @@ const ParticleStage = ({ fontlarHazir }) => {
 
     useEffect(() => {
         if (!fontlarHazir) return undefined;
-        const mobil = window.matchMedia('(max-width: 899px)').matches;
+        // Telefon kararı dokunmatik ekrana göre (ya da çok dar ekrana): dar bir bilgisayar penceresi
+        // telefon moduna (az parçacık) düşmesin.
+        const mobil = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 700;
 
         const tetik = azalt ? null : ScrollTrigger.create({
             trigger: bolum.current,
@@ -67,7 +69,9 @@ const ParticleStage = ({ fontlarHazir }) => {
         });
 
         const giris = document.getElementById('basa');
-        const isim = document.querySelector('.isim');
+        // Ad, parçacıklara dönüşürken satır satır söner. Opaklık her satıra ayrı yazılır: satırlar kendi
+        // katmanındadır (v2.css), böylece sönme ekran kartında olur ve büyük degrade yazı yeniden boyanmaz.
+        const isimSatirlari = [...document.querySelectorAll('.isim .isim-satir')];
         let sonIsimOpaklik = -1;
 
         // Giriş bölümünün yüksekliği her karede ölçülmez (her ölçüm, renk geçişi sırasında tarayıcıyı
@@ -86,9 +90,10 @@ const ParticleStage = ({ fontlarHazir }) => {
                 sahne: tetik && y >= tetik.start ? Math.max(sahne, 0.0001) : 0,
                 sonrasi,
                 isimOpaklik: (o) => {
-                    if (!isim || Math.abs(o - sonIsimOpaklik) < 0.01) return;
+                    if (!isimSatirlari.length || Math.abs(o - sonIsimOpaklik) < 0.01) return;
                     sonIsimOpaklik = o;
-                    isim.style.opacity = String(o);
+                    const v = String(o);
+                    isimSatirlari.forEach((el) => { el.style.opacity = v; });
                 },
             };
         };
@@ -108,7 +113,7 @@ const ParticleStage = ({ fontlarHazir }) => {
             motor.current = null;
             ScrollTrigger.removeEventListener('refresh', girisOlc);
             tetik?.kill(true); // sabitlemeyi geri al: bölüm DOM'daki yerine döner
-            if (isim) { isim.style.opacity = ''; }
+            isimSatirlari.forEach((el) => { el.style.opacity = ''; });
         };
     }, [fontlarHazir, azalt]);
 
